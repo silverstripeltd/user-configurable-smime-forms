@@ -1,0 +1,13 @@
+---
+Name: silverstripe-smime-form-extensions
+After: 'cwpconfig'
+---
+SilverStripe\UserForms\Control\UserDefinedFormController:
+  extensions:
+    - SilverStripe\SmimeForms\Extensions\UserDefinedFormControllerExtension
+SilverStripe\UserForms\Model\Recipient\EmailRecipient:
+  extensions:
+    - SilverStripe\SmimeForms\Extensions\EmailRecipientExtension
+DNADesign\ElementalUserForms\Model\ElementForm:
+  extensions:
+    - SilverStripe\SmimeForms\Extensions\ElementFormExtension

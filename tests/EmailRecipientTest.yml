@@ -1,0 +1,5 @@
+DNADesign\ElementalUserForms\Model\ElementForm:
+  encryptedForm:
+    UseEncryption: true
+  unencryptedForm:
+    UseEncryption: false
