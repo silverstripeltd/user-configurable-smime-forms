@@ -1,6 +1,6 @@
 <?php
 
-namespace Silvers;
+namespace SilverStripe\SmimeForms\Tests;
 
 use DNADesign\ElementalUserForms\Model\ElementForm;
 use SilverStripe\Dev\SapphireTest;
