@@ -21,7 +21,8 @@
         "silverstripe/framework": "^4.0",
         "silverstripe/admin": "^1.0",
         "silverstripe/userforms": "^5.13",
-        "silverstripe/smime": "dev-feature/tidy-up"
+        "dnadesign/silverstripe-elemental": "^4.4",
+        "silverstripe/smime": "dev-feature/tidy-up",
     },
     "require-dev": {
         "phpunit/phpunit": "^9",
