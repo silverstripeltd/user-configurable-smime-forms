@@ -1,15 +1,26 @@
 {
     "name": "silverstripe/smime-forms",
-    "description": "A skeleton for SilverStripe modules.",
+    "description": "A module for extending user forms, so that form submissions can be emailed with S/MIME encryption.",
     "type": "silverstripe-vendormodule",
     "keywords": [
         "silverstripe",
-        "CMS"
+        "CMS",
+        "S/MIME",
+        "encryption"
+    ],
+    "authors": [
+        {
+            "name": "SilverStripe",
+            "homepage": "http://silverstripe.com"
+        }
     ],
     "license": "BSD-3-Clause",
     "require": {
+        "php": "^7.4 || ^8.0",
         "silverstripe/framework": "^4.0",
-        "silverstripe/admin": "^1.0"
+        "silverstripe/admin": "^1.0",
+        "silverstripe/userforms": "^5.13",
+        "silverstripe/silverstripe-smime": "dev-feature/tidy-up"
     },
     "require-dev": {
         "phpunit/phpunit": "^9",
@@ -30,5 +41,11 @@
         ]
     },
     "minimum-stability": "dev",
-    "prefer-stable": true
+    "prefer-stable": true,
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/silverstripeltd/silverstripe-smime.git"
+        }
+    ]
 }
