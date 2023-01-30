@@ -50,5 +50,12 @@
             "type": "vcs",
             "url": "https://github.com/silverstripeltd/silverstripe-smime.git"
         }
-    ]
+    ],
+    "config": {
+        "allow-plugins": {
+            "composer/installers": true,
+            "silverstripe/vendor-plugin": true,
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        }
+    }
 }
