@@ -33,9 +33,7 @@ You can use [choosealicense.com](http://choosealicense.com) to help pick a suita
 ## Documentation
  * [Documentation readme](docs/en/readme.md)
 
-Add links into your docs/<language> folder here unless your module only requires minimal documentation
-in that case, add here and remove the docs folder. You might use this as a quick table of content if you
-mhave multiple documentation pages.
+Installing this module will add an 'SMIME Encryption' option that can be selected
 
 ## Example configuration (optional)
 If your module makes use of the config API in SilverStripe it's a good idea to provide an example config
