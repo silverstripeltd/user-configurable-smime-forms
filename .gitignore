@@ -1,4 +1,8 @@
 node_modules
 /vendor/
 .DS_Store
-
+/app/
+/resources/
+/assets/
+/.phpunit.result.cache
+/.idea/
