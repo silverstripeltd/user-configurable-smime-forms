@@ -14,11 +14,22 @@ use SilverStripe\Core\Injector\Injector;
 use SilverStripe\ORM\DataExtension;
 use SilverStripe\SMIME\Control\SMIMEMailer;
 use SilverStripe\UserForms\Model\Recipient\EmailRecipient;
+use SilverStripe\UserForms\Model\UserDefinedForm;
 
+/**
+ * Class UserDefinedFormControllerExtension
+ *
+ * An extension for {@see UserDefinedForm} class to check whether the form submission needs
+ * to be encrypted. If so, it will replace the standard Mailer with a {@see SMIMEMailer}.
+ *
+ * @package SilverStripe\SmimeForms\Extensions
+ */
 class UserDefinedFormControllerExtension extends DataExtension
 {
 
     /**
+     * Called as an extension hook from {@see UserDefinedForm}.
+     *
      * @throws NotFoundExceptionInterface
      * @throws Exception
      */
@@ -49,6 +60,7 @@ class UserDefinedFormControllerExtension extends DataExtension
 
     /**
      * Get the actual location of the File or Image asset.
+     * Note: No actual built in asset store function seems to be available to do this.
      *
      * @param File $record
      * @param string $tempPath Default: ''

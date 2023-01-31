@@ -6,23 +6,37 @@ use SilverStripe\AssetAdmin\Forms\UploadField;
 use SilverStripe\Assets\File;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\ORM\DataExtension;
+use SilverStripe\UserForms\Model\Recipient\EmailRecipient;
 
 /**
- * Extension to allow the addition of an SMIME encryption certificate to a user form email recipient.
+ * Class EmailRecipientExtension
+ *
+ * An extension for {@see EmailRecipient} to allow the addition of an S/MIME encryption certificate
+ * to a user form email recipient.
+ *
+ * @package SilverStripe\SmimeForms\Extensions
  */
 class EmailRecipientExtension extends DataExtension
 {
 
+    /**
+     * Define has-one relationships
+     */
     private static array $has_one = [
         'EncryptionCrt' => File::class, // The certificate to be used for encrypting email data
     ];
 
     /**
-     * @var array
+     * Define ownership (e.g., for publishing)
      */
     private static array $owns = [
         'EncryptionCrt',
     ];
+
+    /**
+     * Folder in which uploaded encryption certificates will be stored
+     */
+    private static string $uploadFolder = 'SmimeCertificates';
 
     /**
      * {@inheritDoc}
@@ -40,7 +54,7 @@ class EmailRecipientExtension extends DataExtension
         $fields->insertAfter(
             'EmailBody',
             UploadField::create('EncryptionCrt', 'Certificate for S/MIME encryption')
-                ->setFolderName('smime')
+                ->setFolderName(self::$uploadFolder)
                 ->setAllowedExtensions(['crt'])
         );
 
