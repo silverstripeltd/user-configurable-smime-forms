@@ -12,21 +12,22 @@ use SilverStripe\ORM\DataExtension;
  */
 class EmailRecipientExtension extends DataExtension
 {
-    private static $has_one = [
+
+    private static array $has_one = [
         'EncryptionCrt' => File::class, // The certificate to be used for encrypting email data
     ];
 
     /**
      * @var array
      */
-    private static $owns = [
+    private static array $owns = [
         'EncryptionCrt',
     ];
 
     /**
      * {@inheritDoc}
      */
-    public function updateCMSFields(FieldList $fields)
+    public function updateCMSFields(FieldList $fields): FieldList
     {
         $form = $this->getOwner()->Form();
 
@@ -42,9 +43,11 @@ class EmailRecipientExtension extends DataExtension
                 ->setFolderName('smime')
                 ->setAllowedExtensions(['crt'])
         );
+
+        return $fields;
     }
 
-    public function onAfterWrite()
+    public function onAfterWrite(): void
     {
         parent::onAfterWrite();
 

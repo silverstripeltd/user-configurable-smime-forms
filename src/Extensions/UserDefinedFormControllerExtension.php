@@ -7,23 +7,22 @@ use Psr\Container\NotFoundExceptionInterface;
 use SilverStripe\Assets\File;
 use SilverStripe\Assets\Flysystem\FlysystemAssetStore;
 use SilverStripe\Assets\Storage\AssetStore;
-use SilverStripe\Control\Director;
 use SilverStripe\Control\Email\Email;
 use SilverStripe\Control\Email\Mailer;
 use SilverStripe\Core\Environment;
 use SilverStripe\Core\Injector\Injector;
-use SilverStripe\Forms\CheckboxField;
 use SilverStripe\ORM\DataExtension;
 use SilverStripe\SMIME\Control\SMIMEMailer;
 use SilverStripe\UserForms\Model\Recipient\EmailRecipient;
 
 class UserDefinedFormControllerExtension extends DataExtension
 {
+
     /**
      * @throws NotFoundExceptionInterface
      * @throws Exception
      */
-    public function updateEmail(Email $email, EmailRecipient $recipient)
+    public function updateEmail(Email $email, EmailRecipient $recipient): void
     {
         // Check form configuration to see if the email should be encrypted
         if (!$this->owner->encryptEmail()) {

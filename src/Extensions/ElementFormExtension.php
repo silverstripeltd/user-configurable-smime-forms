@@ -3,6 +3,7 @@
 namespace SilverStripe\SmimeForms\Extensions;
 
 use SilverStripe\Forms\CheckboxField;
+use SilverStripe\Forms\FieldList;
 use SilverStripe\ORM\DataExtension;
 
 class ElementFormExtension extends DataExtension
@@ -12,14 +13,21 @@ class ElementFormExtension extends DataExtension
         'UseEncryption' => 'Boolean(0)',
     ];
 
-    public function updateCMSFields($tabbedFields)
+    public function updateCMSFields(FieldList $fields): FieldList
     {
-        $tabbedFields->addFieldsToTab('Root.FormOptions', [
+        $fields->addFieldsToTab('Root.FormOptions', [
             CheckboxField::create('UseEncryption', 'Use SMIME encryption when sending submission emails'),
         ]);
+
+        return $fields;
     }
 
-    public function encryptEmail()
+    /**
+     * Check whether form submission emails should be encrypted.
+     *
+     * @return bool
+     */
+    public function encryptEmail(): bool
     {
         return $this->owner->UseEncryption;
     }
