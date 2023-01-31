@@ -43,6 +43,10 @@
         },
         "expose": [
             "client/dist"
+        ],
+        "project-files-installed": [
+            "phpcs.xml",
+            "phpunit.xml"
         ]
     },
     "minimum-stability": "dev",
