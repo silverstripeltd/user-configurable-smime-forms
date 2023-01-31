@@ -33,8 +33,7 @@ specifically useful when you are sending emails to known recipients, and require
 certificate (.crt file) containing their public encryption key for encrypting.
 
 ### Enable Encryption
-To enable encryption, go to the Configuration tab for your form and enable the Use **SMIME encryption when sending submission
-emails** checkbox.
+To enable encryption, go to the **Configuration** tab for your form and check the Use **Enable S/MIME Encryption** option.
 
 ![](./docs/assets/EncryptionOption.png)
 

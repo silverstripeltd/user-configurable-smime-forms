@@ -53,9 +53,12 @@ class EmailRecipientExtension extends DataExtension
         // Show field for uploading the encryption certificate for this recipient
         $fields->insertAfter(
             'EmailBody',
-            UploadField::create('EncryptionCrt', 'Certificate for S/MIME encryption')
+            UploadField::create('EncryptionCrt', 'S/MIME Encryption Certificate')
                 ->setFolderName(self::$uploadFolder)
                 ->setAllowedExtensions(['crt'])
+                ->setDescription('Upload a valid .crt file for this recipient email address. '
+                    . 'This can be either a self-signed certificate or one purchased from a '
+                    . 'recognised Certificate Authority.')
         );
 
         return $fields;

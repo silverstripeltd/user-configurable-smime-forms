@@ -30,7 +30,9 @@ class ElementFormExtension extends DataExtension
     public function updateCMSFields(FieldList $fields): FieldList
     {
         $fields->addFieldsToTab('Root.FormOptions', [
-            CheckboxField::create('UseEncryption', 'Use S/MIME encryption when sending form submission emails'),
+            CheckboxField::create('UseEncryption', 'Enable S/MIME Encryption')
+                ->setDescription('Enabling this will encrypt form submission emails. Encryption certificates'
+                    . ' will need to be uploaded for each recipient.'),
         ]);
 
         return $fields;
