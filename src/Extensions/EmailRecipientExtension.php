@@ -33,7 +33,7 @@ class EmailRecipientExtension extends DataExtension
 
         // Check if this form should be encrypted
         if ($form && !$form->encryptEmail()) {
-            return;
+            return $fields;
         }
 
         // Show field for uploading the encryption certificate for this recipient
