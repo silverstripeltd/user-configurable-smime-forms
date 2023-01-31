@@ -36,7 +36,11 @@ class EmailRecipientTest extends SapphireTest
         assertNotContains('EncryptionCrt', $fields->dataFieldNames());
     }
 
-    public function testUploadedCertificate(): void
+    /**
+     * Check that when a certificate is attached to a recipient then it is set as
+     * a protected file (i.e., cannot be accessed publicly)
+     */
+    public function testUploadedCertificateIsProtected(): void
     {
         // Create the certificate file
         $file = File::create();
