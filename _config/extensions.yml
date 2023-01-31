@@ -8,6 +8,6 @@ SilverStripe\UserForms\Control\UserDefinedFormController:
 SilverStripe\UserForms\Model\Recipient\EmailRecipient:
   extensions:
     - SilverStripe\SmimeForms\Extensions\EmailRecipientExtension
-DNADesign\ElementalUserForms\Model\ElementForm:
+SilverStripe\UserForms\Model\UserDefinedForm:
   extensions:
     - SilverStripe\SmimeForms\Extensions\ElementFormExtension
