@@ -1,6 +1,9 @@
 # SilverStripe SMIME Forms
 
-This module adds the ability to encrypt user form submissions prior to emailing to recipients.
+This module provides an extension to [Silverstripe Elemental User Forms](https://github.com/dnadesign/silverstripe-elemental-userforms)
+that allows you to choose whether or not the emails for form submissions should be encrypted for added security.
+
+It uses S/MIME encryption.
 
 ## Requirements
 
@@ -9,17 +12,11 @@ This module adds the ability to encrypt user form submissions prior to emailing 
 * SilverStripe S/Mime
 
 ## Installation
-Add some installation instructions here, having a 1 line composer copy and paste is useful.
-Here is a composer command to create a new module project. Ensure you read the
-['publishing a module'](https://docs.silverstripe.org/en/developer_guides/extending/how_tos/publish_a_module/) guide
-and update your module's composer.json to designate your code as a SilverStripe module.
+To start using this module, just add it as a dependency to your project.
 
 ```
 composer require silverstripe/smime-forms
 ```
-
-**Note:** When you have completed your module, submit it to Packagist or add it as a VCS repository to your
-project's composer.json, pointing to the private repository URL.
 
 ## License
 See [License](license.md)
@@ -31,25 +28,25 @@ Feel free to alter the [license.md](license.md) to suit if you wan to use an alt
 You can use [choosealicense.com](http://choosealicense.com) to help pick a suitable license for your project.
 
 ## Documentation
- * [Documentation readme](docs/en/readme.md)
+When designing your elemental form you can choose whether encryption is required. This is
+specifically useful when you are sending emails to known recipients, and requires the recipient's encryption
+certificate (.crt file) containing their public encryption key for encrypting.
 
-Installing this module will add an 'SMIME Encryption' option that can be selected
+### Enable Encryption
+To enable encryption, go to the Configuration tab for your form and enable the Use **SMIME encryption when sending submission
+emails** checkbox.
 
-## Example configuration (optional)
-If your module makes use of the config API in SilverStripe it's a good idea to provide an example config
- here that will get the module working out of the box and expose the user to the possible configuration options.
+![](./docs/assets/EncryptionOption.png)
 
-Provide a yaml code example where possible.
+### Adding recipient encryption certificate
+With encryption enabled you get can upload an encryption certificate
+when adding recipients. To do this:
+* Go to the **Recipients** tab for your form
+* Add/Edit Recipient
+* Click on the **Email Content** tab
+* Upload a valid CRT file to the **Certificate for SMIME encryption** field
 
-```yaml
-
-Page:
-  config_option: true
-  another_config:
-    - item1
-    - item2
-
-```
+![](./docs/assets/RecipientCertificate.png)
 
 ## Maintainers
  * Andrew Dunn <andrew.dunn@silverstripe.com>
