@@ -2,8 +2,8 @@
 <ruleset name="SilverStripe">
     <description>CodeSniffer ruleset for SilverStripe coding conventions.</description>
 
-    <file>src</file>
-    <file>tests</file>
+    <file>./src</file>
+    <file>./tests</file>
 
     <!-- Show progress and output sniff names on violation, and add colours -->
     <arg value="p" />
@@ -164,13 +164,9 @@
     <rule ref="SlevomatCodingStandard.Files.TypeNameMatchesFileName">
         <properties>
             <!-- Set the root namespace for our src dir and phpunit dir. Please change these as required -->
-            <property name="rootNamespaces" type="array" value="app/src=>App,app/tests=>App\Tests"/>
+            <property name="rootNamespaces" type="array" value="src=>SilverStripe\SmimeForms,tests=>SilverStripe\SmimeForms\Tests"/>
             <property name="ignoredNamespaces" type="array" value="Slevomat\Services"/>
         </properties>
-
-        <!-- allow only class Page and PageController to not match path -->
-        <exclude-pattern>Page\.php</exclude-pattern>
-        <exclude-pattern>PageController\.php</exclude-pattern>
     </rule>
 
     <rule ref="SlevomatCodingStandard.ControlStructures.JumpStatementsSpacing">
