@@ -3,6 +3,7 @@
 namespace SilverStripe\SmimeForms\Tests;
 
 use DNADesign\ElementalUserForms\Model\ElementForm;
+use SilverStripe\Assets\File;
 use SilverStripe\Dev\SapphireTest;
 use SilverStripe\UserForms\Model\Recipient\EmailRecipient;
 use SilverStripe\UserForms\Model\UserDefinedForm;
@@ -33,6 +34,24 @@ class EmailRecipientTest extends SapphireTest
         $fields = $recipient->getCMSFields();
 
         assertNotContains('EncryptionCrt', $fields->dataFieldNames());
+    }
+
+    public function testUploadedCertificate(): void
+    {
+        // Create the certificate file
+        $file = File::create();
+        $file->setFromLocalFile(__DIR__ . '/fixtures/smime_test_recipient.crt');
+        $file->write();
+
+        // Create recipient
+        $form = $this->objFromFixture(ElementForm::class, 'encryptedForm');
+        $recipient = EmailRecipient::create();
+        $recipient->Form = $form;
+        $recipient->EncryptionCrt = $file;
+        $recipient->EmailAddress = 'recipient@example.com';
+        $recipient->write();
+
+        self::assertEquals('protected', $file->getVisibility());
     }
 
 }

@@ -63,9 +63,10 @@ class EmailRecipientExtension extends DataExtension
         }
 
         // Set file to protected and 'publish' it
-        $encryptionCertificate->protectFile();
+        $encryptionCertificate->write();
         $encryptionCertificate->publishFile();
         $encryptionCertificate->publishSingle();
+        $encryptionCertificate->protectFile();
     }
 
 }
