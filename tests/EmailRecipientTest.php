@@ -49,6 +49,7 @@ class EmailRecipientTest extends SapphireTest
         $recipient->Form = $form;
         $recipient->EncryptionCrt = $file;
         $recipient->EmailAddress = 'recipient@example.com';
+        $recipient->EmailFrom = 'admin@example.com';
         $recipient->write();
 
         self::assertEquals('protected', $file->getVisibility());
