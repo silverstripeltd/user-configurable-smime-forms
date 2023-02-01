@@ -27,13 +27,13 @@ specifically useful when you are sending emails to known recipients, and require
 certificate (.crt file) containing their public encryption key for encrypting.
 
 ### Optional Digital Signing of Emails
-This module also supports digital signing of emails, which provides further assurance for the recipient of where the email comes from.
+This module supports digital signing of emails, which provides further assurance for the recipient of where the email comes from.
 
 To sign an email you need both the .crt and private .key files. These can be added to a path on the server and set with the following environmental variables:
 
-`SS_SMIME_SIGN_CERT` The signing certificate for the sender of the email.
-`SS_SMIME_SIGN_KEY` The private key that goes with the signing certificate.
-`SS_SMIME_SIGN_PASS` The signing password (if the certificate has been set up with additional password security).
+- `SS_SMIME_SIGN_CERT` The signing certificate for the sender of the email.
+- `SS_SMIME_SIGN_KEY` The private key that goes with the signing certificate.
+- `SS_SMIME_SIGN_PASS` The signing password (if the certificate has been set up with additional password security).
 
 ### Enable Encryption of Emails
 To enable encryption, go to the **Configuration** tab for your form and check the Use **Enable S/MIME Encryption** option.
