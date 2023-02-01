@@ -36,17 +36,17 @@ To sign an email you need both the .crt and private .key files. These can be add
 - `SS_SMIME_SIGN_PASS` The signing password (if the certificate has been set up with additional password security).
 
 ### Enable Encryption of Emails
-To enable encryption, go to the **Configuration** tab for your form and check the Use **Enable S/MIME Encryption** option.
+To enable encryption, go to the **Configuration** tab for your form and check the **Enable S/MIME Encryption** option.
 
 ![](./docs/assets/EncryptionOption.png)
 
 ### Adding recipient encryption certificate
-With encryption enabled you get can upload an encryption certificate
+With encryption enabled you can upload an encryption certificate
 when adding recipients. To do this:
 * Go to the **Recipients** tab for your form
 * Add/Edit Recipient
 * Click on the **Email Content** tab
-* Upload a valid CRT file to the **Certificate for SMIME encryption** field
+* Upload a valid CRT file to the **S/MIME Encryption Certificate** field
 
 ![](./docs/assets/RecipientCertificate.png)
 
