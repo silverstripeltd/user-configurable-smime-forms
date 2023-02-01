@@ -41,9 +41,14 @@ class UserDefinedFormControllerExtension extends DataExtension
 
         $pathToFile = $this->getFilePath($recipient->EncryptionCrt);
 
-        // If no encryption certificate is found then don't proceed
+        // If no encryption certificate is found then proceed but append a warning to the email.
         if (!$pathToFile) {
-            throw new Exception('Encryption certificate is not found');
+            $body = $email->getBody();
+            $encryptionMessage = '<p style="font-weight: bold;margin-bottom: 10px;">'
+                .'Unable to encrypt this email: Ensure that any email recipients for'
+                .'your form have valid encryption certificates.</p>';
+
+            $email->setBody(sprintf('%s%s', $encryptionMessage, $body));
         }
 
         Injector::inst()->registerService(

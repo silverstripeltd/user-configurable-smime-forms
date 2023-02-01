@@ -4,7 +4,9 @@ namespace SilverStripe\SmimeForms\Extensions;
 
 use SilverStripe\Forms\CheckboxField;
 use SilverStripe\Forms\FieldList;
+use SilverStripe\Forms\LiteralField;
 use SilverStripe\ORM\DataExtension;
+use UncleCheese\DisplayLogic\Forms\Wrapper;
 
 /**
  * Class ElementFormExtension
@@ -29,11 +31,21 @@ class FormEmailEncryptionExtension extends DataExtension
      */
     public function updateCMSFields(FieldList $fields): FieldList
     {
+        $fields->unshift(
+            Wrapper::create($encryptionMessage = LiteralField::create(
+                'EmailEncryptionMessage',
+                '<p class="message good">'
+                . 'Email encryption enabled: Ensure that any email recipients have valid encryption certificates.</p>'
+            ))
+        );
+
         $fields->addFieldsToTab('Root.FormOptions', [
             CheckboxField::create('UseEncryption', 'Enable S/MIME Encryption')
                 ->setDescription('Enabling this will encrypt form submission emails. Encryption certificates'
                     . ' will need to be uploaded for each recipient.'),
         ]);
+
+        $encryptionMessage->displayIf('UseEncryption')->isChecked();
 
         return $fields;
     }

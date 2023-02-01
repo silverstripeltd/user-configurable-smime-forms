@@ -4,7 +4,9 @@ namespace SilverStripe\SmimeForms\Extensions;
 
 use SilverStripe\AssetAdmin\Forms\UploadField;
 use SilverStripe\Assets\File;
+use SilverStripe\Forms\CompositeValidator;
 use SilverStripe\Forms\FieldList;
+use SilverStripe\Forms\RequiredFields;
 use SilverStripe\ORM\DataExtension;
 
 /**
@@ -51,7 +53,7 @@ class EmailRecipientExtension extends DataExtension
 
         // Show field for uploading the encryption certificate for this recipient
         $fields->insertAfter(
-            'EmailBody',
+            'Emailforreplyto',
             UploadField::create('EncryptionCrt', 'S/MIME Encryption Certificate')
                 ->setFolderName(self::$uploadFolder)
                 ->setAllowedExtensions(['crt'])
@@ -61,6 +63,21 @@ class EmailRecipientExtension extends DataExtension
         );
 
         return $fields;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function updateCMSCompositeValidator(CompositeValidator $compositeValidator): void
+    {
+        // Check if this form should be encrypted
+        if (!$this->owner->Form || !$this->owner->Form->encryptEmail()) {
+            return;
+        }
+
+        $compositeValidator->addValidator(RequiredFields::create([
+            'EncryptionCrt',
+        ]));
     }
 
     public function onAfterWrite(): void
