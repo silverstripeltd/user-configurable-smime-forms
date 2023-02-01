@@ -6,7 +6,6 @@ use SilverStripe\AssetAdmin\Forms\UploadField;
 use SilverStripe\Assets\File;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\ORM\DataExtension;
-use SilverStripe\UserForms\Model\Recipient\EmailRecipient;
 
 /**
  * Class EmailRecipientExtension

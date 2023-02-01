@@ -2,11 +2,9 @@
 
 namespace SilverStripe\SmimeForms\Extensions;
 
-use DNADesign\ElementalUserForms\Model\ElementForm;
 use SilverStripe\Forms\CheckboxField;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\ORM\DataExtension;
-use SilverStripe\UserForms\Model\UserDefinedForm;
 
 /**
  * Class ElementFormExtension

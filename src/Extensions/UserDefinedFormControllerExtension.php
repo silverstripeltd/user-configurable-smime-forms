@@ -14,7 +14,6 @@ use SilverStripe\Core\Injector\Injector;
 use SilverStripe\ORM\DataExtension;
 use SilverStripe\SMIME\Control\SMIMEMailer;
 use SilverStripe\UserForms\Model\Recipient\EmailRecipient;
-use SilverStripe\UserForms\Model\UserDefinedForm;
 
 /**
  * Class UserDefinedFormControllerExtension
