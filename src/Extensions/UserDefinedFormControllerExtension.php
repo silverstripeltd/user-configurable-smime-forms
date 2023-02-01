@@ -43,12 +43,10 @@ class UserDefinedFormControllerExtension extends DataExtension
 
         // If no encryption certificate is found then proceed but append a warning to the email.
         if (!$pathToFile) {
-            $body = $email->getBody();
-            $encryptionMessage = '<p style="font-weight: bold;margin-bottom: 10px;">'
-                .'Unable to encrypt this email: Ensure that any email recipients for'
-                .'your form have valid encryption certificates.</p>';
+            $subject = $email->getSubject();
+            $encryptionMessage = '[UNENCRYPTED: CHECK CMS CONFIGURATION]';
 
-            $email->setBody(sprintf('%s%s', $encryptionMessage, $body));
+            $email->setSubject(sprintf('%s %s', $subject, $encryptionMessage));
         }
 
         Injector::inst()->registerService(

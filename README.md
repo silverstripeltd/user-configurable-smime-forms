@@ -45,7 +45,7 @@ With encryption enabled you can upload an encryption certificate
 when adding recipients. To do this:
 * Go to the **Recipients** tab for your form
 * Add/Edit Recipient
-* Click on the **Email Content** tab
+* Click on the **Email Details** tab
 * Upload a valid CRT file to the **S/MIME Encryption Certificate** field
 
 ![](./docs/assets/RecipientCertificate.png)

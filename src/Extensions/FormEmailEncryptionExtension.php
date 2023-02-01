@@ -35,7 +35,7 @@ class FormEmailEncryptionExtension extends DataExtension
             Wrapper::create($encryptionMessage = LiteralField::create(
                 'EmailEncryptionMessage',
                 '<p class="message good">'
-                . 'Email encryption enabled: Ensure that any email recipients have valid encryption certificates.</p>'
+                . 'Email encryption enabled: Ensure that all Recipients have valid encryption certificates.</p>'
             ))
         );
 
