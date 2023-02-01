@@ -21,12 +21,6 @@ composer require silverstripe/smime-forms
 ## License
 See [License](license.md)
 
-We have included a 3-clause BSD license you can use as a default. We advocate for the BSD license as
-it is one of the most permissive and open licenses.
-
-Feel free to alter the [license.md](license.md) to suit if you wan to use an alternative license.
-You can use [choosealicense.com](http://choosealicense.com) to help pick a suitable license for your project.
-
 ## Documentation
 When designing your elemental form you can choose whether encryption is required. This is
 specifically useful when you are sending emails to known recipients, and requires the recipient's encryption
