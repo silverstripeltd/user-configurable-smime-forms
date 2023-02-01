@@ -1,7 +1,7 @@
 # SilverStripe SMIME Forms
 
 This module provides an extension to [Silverstripe Elemental User Forms](https://github.com/dnadesign/silverstripe-elemental-userforms)
-that allows you to choose whether or not the emails for form submissions should be encrypted for added security.
+that allows you to choose whether or not the emails for form submissions should be encrypted and/or digitally signed, for added security.
 
 It uses S/MIME encryption.
 
@@ -32,7 +32,16 @@ When designing your elemental form you can choose whether encryption is required
 specifically useful when you are sending emails to known recipients, and requires the recipient's encryption
 certificate (.crt file) containing their public encryption key for encrypting.
 
-### Enable Encryption
+### Optional Digital Signing of Emails
+This module also supports digital signing of emails, which provides further assurance for the recipient of where the email comes from.
+
+To sign an email you need both the .crt and private .key files. These can be added to a path on the server and set with the following environmental variables:
+
+`SS_SMIME_SIGN_CERT` The signing certificate for the sender of the email.
+`SS_SMIME_SIGN_KEY` The private key that goes with the signing certificate.
+`SS_SMIME_SIGN_PASS` The signing password (if the certificate has been set up with additional password security).
+
+### Enable Encryption of Emails
 To enable encryption, go to the **Configuration** tab for your form and check the Use **Enable S/MIME Encryption** option.
 
 ![](./docs/assets/EncryptionOption.png)
