@@ -10,4 +10,7 @@ SilverStripe\UserForms\Model\Recipient\EmailRecipient:
     - SilverStripe\SmimeForms\Extensions\EmailRecipientExtension
 SilverStripe\UserForms\Model\UserDefinedForm:
   extensions:
-    - SilverStripe\SmimeForms\Extensions\ElementFormExtension
+    - SilverStripe\SmimeForms\Extensions\FormEmailEncryptionExtension
+DNADesign\ElementalUserForms\Model\ElementForm:
+  extensions:
+    - SilverStripe\SmimeForms\Extensions\FormEmailEncryptionExtension

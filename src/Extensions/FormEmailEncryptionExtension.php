@@ -6,15 +6,17 @@ use DNADesign\ElementalUserForms\Model\ElementForm;
 use SilverStripe\Forms\CheckboxField;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\ORM\DataExtension;
+use SilverStripe\UserForms\Model\UserDefinedForm;
 
 /**
  * Class ElementFormExtension
  *
- * An extension for the {@see ElementForm} class to provide an option for encrypting form submission emails.
+ * An extension for the {@see ElementForm} and {@see UserDefinedForm} classes to provide an option for
+ * encrypting form submission emails.
  *
  * @package SilverStripe\SmimeForms\Extensions
  */
-class ElementFormExtension extends DataExtension
+class FormEmailEncryptionExtension extends DataExtension
 {
 
     /**
