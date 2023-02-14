@@ -40,7 +40,7 @@ class EmailRecipientExtension extends DataExtension
     private static string $uploadFolder = 'SmimeCertificates';
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function updateCMSFields(FieldList $fields): FieldList
     {
@@ -66,7 +66,7 @@ class EmailRecipientExtension extends DataExtension
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function updateCMSCompositeValidator(CompositeValidator $compositeValidator): void
     {
