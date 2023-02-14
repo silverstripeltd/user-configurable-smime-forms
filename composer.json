@@ -1,5 +1,5 @@
 {
-    "name": "silverstripe/smime-forms",
+    "name": "silverstripeltd/user-configurable-smime-forms",
     "description": "A skeleton for SilverStripe modules.",
     "type": "silverstripe-vendormodule",
     "keywords": [
