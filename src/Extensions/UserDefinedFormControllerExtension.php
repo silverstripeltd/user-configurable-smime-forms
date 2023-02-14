@@ -39,9 +39,14 @@ class UserDefinedFormControllerExtension extends DataExtension
             return;
         }
 
-        $pathToFile = $this->getFilePath($recipient->EncryptionCrt);
+        $pathToFile = null;
 
-        // If no encryption certificate is found then proceed but append a warning to the email.
+        // Check for a recipient encryption certificate, and set path to file
+        if ($recipient->EncryptionCrt->exists()) {
+            $pathToFile = $this->getFilePath($recipient->EncryptionCrt);
+        }
+
+        // If no encryption certificate was found then proceed but append a warning to the email.
         if (!$pathToFile) {
             $subject = $email->getSubject();
             $encryptionMessage = '[UNENCRYPTED: CHECK CMS CONFIGURATION]';
@@ -71,57 +76,53 @@ class UserDefinedFormControllerExtension extends DataExtension
      */
     public function getFilePath(File $record, string $tempPath = ''): ?string
     {
-        if ($record->exists()) {
-            /** @var FlysystemAssetStore $flysystem */
-            $flysystem = Injector::inst()->get(AssetStore::class);
-            $dbFile = $record->File;
+        /** @var FlysystemAssetStore $flysystem */
+        $flysystem = Injector::inst()->get(AssetStore::class);
+        $dbFile = $record->File;
 
-            $protectedPath = sprintf(
-                '%s/.protected/%s',
-                ASSETS_PATH,
-                $flysystem->getMetadata(
-                    $dbFile->Filename,
-                    $dbFile->Hash,
-                    $dbFile->Variant
-                )['path']
-            );
+        $protectedPath = sprintf(
+            '%s/.protected/%s',
+            ASSETS_PATH,
+            $flysystem->getMetadata(
+                $dbFile->Filename,
+                $dbFile->Hash,
+                $dbFile->Variant
+            )['path']
+        );
 
-            if (file_exists($protectedPath)) {
-                return $protectedPath;
-            }
+        if (file_exists($protectedPath)) {
+            return $protectedPath;
+        }
 
-            $path = sprintf(
+        $path = sprintf(
+            '%s/%s',
+            ASSETS_PATH,
+            $flysystem->getMetadata(
+                $dbFile->Filename,
+                $dbFile->Hash,
+                $dbFile->Variant
+            )['path']
+        );
+
+        if (file_exists($path)) {
+            return $path;
+        }
+
+        if ($tempPath) {
+            $test_path = sprintf(
                 '%s/%s',
                 ASSETS_PATH,
                 $flysystem->getMetadata(
-                    $dbFile->Filename,
+                    '{$tempPath}/{$dbFile->Filename}',
                     $dbFile->Hash,
                     $dbFile->Variant
                 )['path']
             );
 
-            if (file_exists($path)) {
-                return $path;
-            }
-
-            if ($tempPath) {
-                $test_path = sprintf(
-                    '%s/%s',
-                    ASSETS_PATH,
-                    $flysystem->getMetadata(
-                        '{$tempPath}/{$dbFile->Filename}',
-                        $dbFile->Hash,
-                        $dbFile->Variant
-                    )['path']
-                );
-
-                if (file_exists($test_path)) {
-                    return $test_path;
-                }
+            if (file_exists($test_path)) {
+                return $test_path;
             }
         }
-
-        return null;
     }
 
 }

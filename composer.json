@@ -1,5 +1,5 @@
 {
-    "name": "silverstripe/smime-forms",
+    "name": "silverstripeltd/user-configurable-smime-forms",
     "description": "A module for extending user forms, so that form submissions can be emailed with S/MIME encryption.",
     "type": "silverstripe-vendormodule",
     "keywords": [
@@ -10,19 +10,19 @@
     ],
     "authors": [
         {
-            "name": "SilverStripe",
+            "name": "Silverstripe Ltd",
             "homepage": "http://silverstripe.com"
         }
     ],
     "license": "BSD-3-Clause",
     "require": {
-        "php": "^7.4 || ^8.0",
+        "php": "^8.0",
         "silverstripe/vendor-plugin": "^1",
         "silverstripe/framework": "^4.0",
         "silverstripe/admin": "^1.0",
         "silverstripe/userforms": "^5.13",
         "dnadesign/silverstripe-elemental": "^4.4",
-        "silverstripe/smime": "dev-feature/tidy-up",
+        "silverstripe/smime": "dev-master",
         "dnadesign/silverstripe-elemental-userforms": "^3.2",
         "silverstripe/asset-admin": "^1.11",
         "unclecheese/display-logic": "^2.0"

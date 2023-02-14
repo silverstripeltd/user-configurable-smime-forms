@@ -41,8 +41,11 @@ class FormEmailEncryptionExtension extends DataExtension
 
         $fields->addFieldsToTab('Root.FormOptions', [
             CheckboxField::create('UseEncryption', 'Enable S/MIME Encryption')
-                ->setDescription('Enabling this will encrypt form submission emails. Encryption certificates'
-                    . ' will need to be uploaded for each recipient.'),
+                ->setDescription('Enabling this will encrypt form submission emails.'
+                    . ' <br><strong>Note: Encryption certificates'
+                    . ' will need to be uploaded for each recipient. Recipients without'
+                    . ' a certificate will still receive the email but it will be unencrypted with'
+                    . ' a configuration alert in the email subject.</strong>'),
         ]);
 
         $encryptionMessage->displayIf('UseEncryption')->isChecked();
