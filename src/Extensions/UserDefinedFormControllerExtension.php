@@ -41,9 +41,10 @@ class UserDefinedFormControllerExtension extends DataExtension
 
         $pathToFile = null;
 
-        // Check for a recipient encryption certificate, and set path to file
-        if ($recipient->EncryptionCrt->exists()) {
-            $pathToFile = $this->getFilePath($recipient->EncryptionCrt);
+        // Check for a recipient encryption certificate, with a matching email address, and set path to file
+        $encryptionCertificateEntry = SmimeEncryptionCertificate::get()->filter('EmailAddress', $recipient->EmailAddress)->first();
+        if ($encryptionCertificateEntry && $encryptionCertificateEntry->EncryptionCrt->exists()) {
+            $pathToFile = $this->getFilePath($encryptionCertificateEntry->EncryptionCrt);
         }
 
         // If no encryption certificate was found then proceed but append a warning to the email.
