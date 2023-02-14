@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "06a149f1456fda7bf3b693c2d7ec3603",
+    "content-hash": "118db50e3ee44fa9c4f1a74644f989cb",
     "packages": [
         {
             "name": "bramus/ansi-php",
@@ -3186,26 +3186,30 @@
         },
         {
             "name": "silverstripe/smime",
-            "version": "dev-feature/tidy-up",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/silverstripeltd/silverstripe-smime.git",
-                "reference": "99805f00d7e30b21859b2f9935fa375cb092126b"
+                "reference": "0ca2fbf224d3b69852abd4717a0e1f40e392c18f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/silverstripeltd/silverstripe-smime/zipball/99805f00d7e30b21859b2f9935fa375cb092126b",
-                "reference": "99805f00d7e30b21859b2f9935fa375cb092126b",
+                "url": "https://api.github.com/repos/silverstripeltd/silverstripe-smime/zipball/0ca2fbf224d3b69852abd4717a0e1f40e392c18f",
+                "reference": "0ca2fbf224d3b69852abd4717a0e1f40e392c18f",
                 "shasum": ""
             },
             "require": {
                 "ext-openssl": "*",
+                "php": "^8.0 || ^8.1",
+                "silverstripe/cms": "^4.11",
                 "silverstripe/framework": "^4.9"
             },
             "require-dev": {
                 "phpunit/phpunit": "^9.5",
+                "slevomat/coding-standard": "^8.8",
                 "squizlabs/php_codesniffer": "^3.0"
             },
+            "default-branch": true,
             "type": "silverstripe-vendormodule",
             "autoload": {
                 "psr-4": {
@@ -3224,6 +3228,10 @@
                 {
                     "name": "Danae Miller-Clendon",
                     "email": "danae.millerclendon@silverstripe.com"
+                },
+                {
+                    "name": "Andrew Dunn",
+                    "email": "andrew.dunn@silverstripe.com"
                 }
             ],
             "description": "Provides support for using S/MIME with the standard Silverstripe Email API.",
@@ -3234,9 +3242,9 @@
                 "smime"
             ],
             "support": {
-                "source": "https://github.com/silverstripeltd/silverstripe-smime/tree/feature/tidy-up"
+                "source": "https://github.com/silverstripeltd/silverstripe-smime/tree/master"
             },
-            "time": "2023-01-25T20:48:57+00:00"
+            "time": "2023-02-06T20:14:19+00:00"
         },
         {
             "name": "silverstripe/userforms",
@@ -7557,7 +7565,7 @@
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
-        "php": "^7.4 || ^8.0"
+        "php": "^8.0"
     },
     "platform-dev": [],
     "plugin-api-version": "2.2.0"
