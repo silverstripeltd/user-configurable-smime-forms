@@ -108,21 +108,25 @@ class UserDefinedFormControllerExtension extends DataExtension
             return $path;
         }
 
-        if ($tempPath) {
-            $test_path = sprintf(
-                '%s/%s',
-                ASSETS_PATH,
-                $flysystem->getMetadata(
-                    '{$tempPath}/{$dbFile->Filename}',
-                    $dbFile->Hash,
-                    $dbFile->Variant
-                )['path']
-            );
-
-            if (file_exists($test_path)) {
-                return $test_path;
-            }
+        if (!$tempPath) {
+            return null;
         }
+
+        $test_path = sprintf(
+            '%s/%s',
+            ASSETS_PATH,
+            $flysystem->getMetadata(
+                '{$tempPath}/{$dbFile->Filename}',
+                $dbFile->Hash,
+                $dbFile->Variant
+            )['path']
+        );
+
+        if (!file_exists($test_path)) {
+            return null;
+        }
+
+        return $test_path;
     }
 
 }
