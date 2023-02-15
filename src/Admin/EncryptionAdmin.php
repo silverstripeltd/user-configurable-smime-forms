@@ -3,10 +3,10 @@
 namespace SilverStripe\SmimeForms\Admin;
 
 use SilverStripe\Admin\ModelAdmin;
+use SilverStripe\Security\Permission;
 use SilverStripe\Security\PermissionProvider;
 use SilverStripe\SmimeForms\Model\SmimeEncryptionCertificate;
 use SilverStripe\SmimeForms\Model\SmimeSigningCertificate;
-use SilverStripe\SmimeForms\Traits\CertificateAdminPermissionsTrait;
 
 /**
  * class EncryptionAdmin
@@ -19,8 +19,6 @@ use SilverStripe\SmimeForms\Traits\CertificateAdminPermissionsTrait;
  */
 class EncryptionAdmin extends ModelAdmin implements PermissionProvider
 {
-
-    use CertificateAdminPermissionsTrait;
 
     /**
      * Permission name for allowing access to certificate administration.
@@ -49,5 +47,16 @@ class EncryptionAdmin extends ModelAdmin implements PermissionProvider
         SmimeEncryptionCertificate::class,
         SmimeSigningCertificate::class,
     ];
+
+    /**
+     * Permissions for viewing certificates.
+     *
+     * @param null $member
+     * @return bool
+     */
+    public function canView($member = null): bool
+    {
+        return Permission::check(EncryptionAdmin::PERMISSION_SMIME_ENCRYPTION_ADMIN);
+    }
 
 }

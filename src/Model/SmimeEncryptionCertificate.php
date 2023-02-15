@@ -7,12 +7,11 @@ use SilverStripe\Assets\File;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\ValidationResult;
-use SilverStripe\SmimeForms\Traits\CertificateAdminPermissionsTrait;
+use SilverStripe\Security\Permission;
+use SilverStripe\SmimeForms\Admin\EncryptionAdmin;
 
 class SmimeEncryptionCertificate extends DataObject
 {
-
-    use CertificateAdminPermissionsTrait;
 
     /**
      * Define the database table name for this data object type.
@@ -124,6 +123,36 @@ class SmimeEncryptionCertificate extends DataObject
         }
 
         return $result;
+    }
+
+    /**
+     * Permissions for viewing certificates.
+     *
+     * @inheritDoc
+     */
+    public function canView($member = null): bool
+    {
+        return Permission::check(EncryptionAdmin::PERMISSION_SMIME_ENCRYPTION_ADMIN);
+    }
+
+    /**
+     * Permissions for editing certificates.
+     *
+     * @inheritDoc
+     */
+    public function canEdit($member = null): bool
+    {
+        return Permission::check(EncryptionAdmin::PERMISSION_SMIME_ENCRYPTION_ADMIN);
+    }
+
+    /**
+     * Permissions for creating certificates.
+     *
+     * @inheritDoc
+     */
+    public function canCreate($member = null, $context = []): bool
+    {
+        return Permission::check(EncryptionAdmin::PERMISSION_SMIME_ENCRYPTION_ADMIN);
     }
 
 }
