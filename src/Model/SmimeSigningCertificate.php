@@ -4,47 +4,54 @@ namespace SilverStripe\SmimeForms\Model;
 
 use SilverStripe\AssetAdmin\Forms\UploadField;
 use SilverStripe\Assets\File;
-use SilverStripe\Forms\CompositeValidator;
 use SilverStripe\Forms\FieldList;
-use SilverStripe\Forms\RequiredFields;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\Security\Permission;
 use SilverStripe\SmimeForms\Admin\EncryptionAdmin;
 
-class SmimeEncryptionCertificate extends DataObject
+class SmimeSigningCertificate extends DataObject
 {
 
     /**
      * @var string
      */
-    private static $table_name = 'SmimeEncryptionCertificate';
+    private static $table_name = 'SmimeSigningCertificate';
 
-    private static $singular_name = 'Encryption Certificate';
+    private static $singular_name = 'Signing Certificate';
 
-    private static $plural_name = 'Encryption Certificates';
+    private static $plural_name = 'Signing Certificates';
 
-    private static $url_segment = 'encryption';
+    private static $url_segment = 'signing';
+
     /**
      * @var array
      */
     private static $db = [
         'EmailAddress' => 'Varchar(80)',
+        'SigningPassword' => 'Varchar(255)',
     ];
 
     private static $casting = [
-        'EncryptionCertificate' => 'Varchar(255)'
+        'SigningCertificateFilename' => 'Varchar(255)',
+        'SigningKeyFilename' => 'Varchar(255)'
     ];
 
-    public function getEncryptionCertificate()
+    public function getSigningCertificateFilename()
     {
-        return $this->EncryptionCrt->Exists() ? $this->EncryptionCrt->FileFilename : 'File not uploaded';
+        return $this->SigningCertificate->exists() ? $this->SigningCertificate->Name : 'File not uploaded';
+    }
+
+    public function getSigningKeyFilename()
+    {
+        return $this->SigningKey->exists() ? $this->SigningKey->Name : 'File not uploaded';
     }
 
     /**
      * Define has-one relationships
      */
     private static array $has_one = [
-        'EncryptionCrt' => File::class, // The certificate to be used for encrypting email data
+        'SigningCertificate' => File::class, // The certificate to be used for signing the email
+        'SigningKey' => File::class,
     ];
 
     /**
@@ -52,14 +59,16 @@ class SmimeEncryptionCertificate extends DataObject
      */
     private static $summary_fields = [
         'EmailAddress' => 'Email Address',
-        'EncryptionCertificate' => 'Encryption Certificate',
+        'SigningCertificateFilename' => 'Signing Certificate',
+        'SigningKeyFilename' => 'Signing Key',
     ];
 
     /**
      * Define ownership (e.g., for publishing)
      */
     private static array $owns = [
-        'EncryptionCrt',
+        'SigningCertificate',
+        'SigningKey',
     ];
 
     /**
@@ -75,12 +84,24 @@ class SmimeEncryptionCertificate extends DataObject
     {
         // Show field for uploading the encryption certificate for this recipient
         $fields->add(
-            UploadField::create('EncryptionCrt', 'S/MIME Encryption Certificate')
+            UploadField::create('SigningCertificate', 'S/MIME Signing Certificate')
                 ->setFolderName(self::$uploadFolder)
                 ->setAllowedExtensions(['crt'])
-                ->setDescription('Upload a valid <pre>.crt</pre> file for this recipient email address. '
+                ->setDescription('Upload a valid <pre>.crt</pre> file for this email address. '
                     . 'This can be either a self-signed certificate or one purchased from a '
                     . 'recognised Certificate Authority.')
+        );
+
+        $fields->add(
+            UploadField::create('SigningKey', 'S/MIME Signing Key')
+                ->setFolderName(self::$uploadFolder)
+                ->setAllowedExtensions(['key'])
+                ->setDescription('Upload a valid <pre>.key</pre> file for this recipient email address.')
+        );
+
+        $fields->add(
+            TextField::create('SigningPassword', 'S/MIME Signing Key Passphrase')
+                ->setDescription('Enter the security passphrase for this signing key. This will be stored encrypted.')
         );
 
         return $fields;
@@ -89,19 +110,10 @@ class SmimeEncryptionCertificate extends DataObject
     public function onAfterWrite(): void
     {
         parent::onAfterWrite();
+        // Check if a signing certificate file has been uploaded
+        $this->afterWriteForAsset($this->SigningCertificate);
+        $this->afterWriteForAsset($this->SigningKey);
 
-        // Check if an encryption certificate file has been uploaded
-        $encryptionCertificate = $this->owner->EncryptionCrt;
-
-        if (!$encryptionCertificate) {
-            return;
-        }
-
-        // Set file to protected and 'publish' it
-        $encryptionCertificate->write();
-        $encryptionCertificate->publishFile();
-        $encryptionCertificate->publishSingle();
-        $encryptionCertificate->protectFile();
     }
 
     public function validate() {
@@ -128,6 +140,19 @@ class SmimeEncryptionCertificate extends DataObject
     public function canCreate($member = null, $context = [])
     {
         return Permission::check(EncryptionAdmin::PERMISSION_SMIME_ENCRYPTION_ADMIN);
+    }
+
+    private function afterWriteForAsset(File $asset): void
+    {
+        if (!$asset->exists()) {
+            return;
+        }
+
+        // Set file to protected and 'publish' it
+        $asset->write();
+        $asset->publishFile();
+        $asset->publishSingle();
+        $asset->protectFile();
     }
 
 }

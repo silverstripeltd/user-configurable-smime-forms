@@ -13,6 +13,8 @@ use SilverStripe\Core\Environment;
 use SilverStripe\Core\Injector\Injector;
 use SilverStripe\ORM\DataExtension;
 use SilverStripe\SMIME\Control\SMIMEMailer;
+use SilverStripe\SmimeForms\Model\SmimeEncryptionCertificate;
+use SilverStripe\SmimeForms\Model\SmimeSigningCertificate;
 use SilverStripe\UserForms\Model\Recipient\EmailRecipient;
 
 /**
@@ -55,12 +57,16 @@ class UserDefinedFormControllerExtension extends DataExtension
             $email->setSubject(sprintf('%s %s', $subject, $encryptionMessage));
         }
 
+        $senderEmailAddress = array_key_first($email->getFrom());
+
+        $signingCredentials = $this->checkForSigningCredentials($senderEmailAddress);
+
         Injector::inst()->registerService(
             SMIMEMailer::create(
                 $pathToFile,
-                Environment::getEnv('SS_SMIME_SIGN_CERT'),
-                Environment::getEnv('SS_SMIME_SIGN_KEY'),
-                Environment::getEnv('SS_SMIME_SIGN_PASS'),
+                $signingCredentials['certificate'],
+                $signingCredentials['key'],
+                $signingCredentials['passphrase'],
             ),
             Mailer::class
         );
@@ -128,6 +134,20 @@ class UserDefinedFormControllerExtension extends DataExtension
         }
 
         return $test_path;
+    }
+
+    private function checkForSigningCredentials(string $sender): array {
+        $senderSigningCertificate = SmimeSigningCertificate::get()->filter('EmailAddress', $sender)->first();
+
+        if (!$senderSigningCertificate) {
+            return [];
+        }
+
+        return [
+            'certificate' => $senderSigningCertificate->SigningCertificate ? $this->getFilePath($senderSigningCertificate->SigningCertificate) : null,
+            'key' => $senderSigningCertificate->SigningKey ? $this->getFilePath($senderSigningCertificate->SigningKey) : null,
+            'passphrase' => $senderSigningCertificate->SigningPassword,
+        ];
     }
 
 }
