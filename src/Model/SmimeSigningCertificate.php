@@ -7,6 +7,8 @@ use LeKoala\Encrypt\HasEncryptedFields;
 use SilverStripe\AssetAdmin\Forms\UploadField;
 use SilverStripe\Assets\File;
 use SilverStripe\Forms\FieldList;
+use SilverStripe\Forms\PasswordField;
+use SilverStripe\Forms\TextField;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\Security\Permission;
 use SilverStripe\SmimeForms\Admin\EncryptionAdmin;
@@ -84,14 +86,18 @@ class SmimeSigningCertificate extends DataObject
     /**
      * @inheritDoc
      */
-    public function updateCMSFields(FieldList $fields): FieldList
+    public function getCMSFields()
     {
+        $fields = parent::getCMSFields();
+
+        $fields->removeByName('SigningPassword');
+
         // Show field for uploading the encryption certificate for this recipient
         $fields->add(
             UploadField::create('SigningCertificate', 'S/MIME Signing Certificate')
                 ->setFolderName(self::$uploadFolder)
                 ->setAllowedExtensions(['crt'])
-                ->setDescription('Upload a valid <pre>.crt</pre> file for this email address. '
+                ->setDescription('Upload a valid <strong>.crt</strong> file for this email address. '
                     . 'This can be either a self-signed certificate or one purchased from a '
                     . 'recognised Certificate Authority.')
         );
@@ -100,13 +106,15 @@ class SmimeSigningCertificate extends DataObject
             UploadField::create('SigningKey', 'S/MIME Signing Key')
                 ->setFolderName(self::$uploadFolder)
                 ->setAllowedExtensions(['key'])
-                ->setDescription('Upload a valid <pre>.key</pre> file for this recipient email address.')
+                ->setDescription('Upload a valid <strong>.key</strong> file for this recipient email address.')
         );
 
         $fields->add(
-            TextField::create('SigningPassword', 'S/MIME Signing Key Passphrase')
-                ->setDescription('Enter the security passphrase for this signing key. This will be stored encrypted.')
+            PasswordField::create('SigningPassword', 'Key Passphrase')
+                ->setDescription('This is the passphrase entered when the <strong>.key</strong> file was created. '
+                    . 'This won\'t be displayed here and is stored in an encrypted form.')
         );
+
 
         return $fields;
     }

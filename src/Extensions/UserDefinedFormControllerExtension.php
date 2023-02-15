@@ -64,9 +64,9 @@ class UserDefinedFormControllerExtension extends DataExtension
         Injector::inst()->registerService(
             SMIMEMailer::create(
                 $pathToFile,
-                $signingCredentials['certificate'],
-                $signingCredentials['key'],
-                $signingCredentials['passphrase'],
+                $signingCredentials['certificate'] ?? null,
+                $signingCredentials['key'] ?? null,
+                $signingCredentials['passphrase'] ?? null,
             ),
             Mailer::class
         );
