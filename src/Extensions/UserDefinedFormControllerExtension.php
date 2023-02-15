@@ -9,7 +9,6 @@ use SilverStripe\Assets\Flysystem\FlysystemAssetStore;
 use SilverStripe\Assets\Storage\AssetStore;
 use SilverStripe\Control\Email\Email;
 use SilverStripe\Control\Email\Mailer;
-use SilverStripe\Core\Environment;
 use SilverStripe\Core\Injector\Injector;
 use SilverStripe\ORM\DataExtension;
 use SilverStripe\SMIME\Control\SMIMEMailer;
@@ -44,7 +43,9 @@ class UserDefinedFormControllerExtension extends DataExtension
         $pathToFile = null;
 
         // Check for a recipient encryption certificate, with a matching email address, and set path to file
-        $encryptionCertificateEntry = SmimeEncryptionCertificate::get()->filter('EmailAddress', $recipient->EmailAddress)->first();
+        $encryptionCertificateEntry = SmimeEncryptionCertificate::get()
+            ->filter('EmailAddress', $recipient->EmailAddress)->first();
+
         if ($encryptionCertificateEntry && $encryptionCertificateEntry->EncryptionCrt->exists()) {
             $pathToFile = $this->getFilePath($encryptionCertificateEntry->EncryptionCrt);
         }
@@ -136,16 +137,32 @@ class UserDefinedFormControllerExtension extends DataExtension
         return $test_path;
     }
 
-    private function checkForSigningCredentials(string $sender): array {
-        $senderSigningCertificate = SmimeSigningCertificate::get()->filter('EmailAddress', $sender)->first();
+    /**
+     * Checks for signing certificate for an email address and, if found, returns an array containing
+     * the certificate path, key path and kay passphrase.
+     *
+     * @throws NotFoundExceptionInterface
+     */
+    private function checkForSigningCredentials(string $senderEmailAddress): array
+    {
+        $senderSigningCertificate = SmimeSigningCertificate::get()
+            ->filter('EmailAddress', $senderEmailAddress)->first();
 
         if (!$senderSigningCertificate) {
             return [];
         }
 
+        $certificatePath = $senderSigningCertificate->SigningCertificate ?
+            $this->getFilePath($senderSigningCertificate->SigningCertificate)
+            : null;
+
+        $keyPath = $senderSigningCertificate->SigningKey ?
+            $this->getFilePath($senderSigningCertificate->SigningKey)
+            : null;
+
         return [
-            'certificate' => $senderSigningCertificate->SigningCertificate ? $this->getFilePath($senderSigningCertificate->SigningCertificate) : null,
-            'key' => $senderSigningCertificate->SigningKey ? $this->getFilePath($senderSigningCertificate->SigningKey) : null,
+            'certificate' => $certificatePath,
+            'key' => $keyPath,
             'passphrase' => $senderSigningCertificate->SigningPassword,
         ];
     }

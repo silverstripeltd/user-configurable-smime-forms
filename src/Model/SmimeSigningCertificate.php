@@ -8,46 +8,57 @@ use SilverStripe\AssetAdmin\Forms\UploadField;
 use SilverStripe\Assets\File;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\PasswordField;
-use SilverStripe\Forms\TextField;
 use SilverStripe\ORM\DataObject;
-use SilverStripe\Security\Permission;
-use SilverStripe\SmimeForms\Admin\EncryptionAdmin;
+use SilverStripe\ORM\ValidationException;
+use SilverStripe\ORM\ValidationResult;
+use SilverStripe\SmimeForms\Traits\CertificateAdminPermissionsTrait;
 
 class SmimeSigningCertificate extends DataObject
 {
 
     use HasEncryptedFields;
+    use CertificateAdminPermissionsTrait;
 
     /**
-     * @var string
+     * Define the database table name for this data object type.
      */
-    private static $table_name = 'SmimeSigningCertificate';
-
-    private static $singular_name = 'Signing Certificate';
-
-    private static $plural_name = 'Signing Certificates';
-
-    private static $url_segment = 'signing';
+    private static string $table_name = 'SmimeSigningCertificate';
 
     /**
-     * @var array
+     * Define the singular name for this data object.
      */
-    private static $db = [
+    private static string $singular_name = 'Signing Certificate';
+
+    /**
+     * Define the plural name for this data object.
+     */
+    private static string $plural_name = 'Signing Certificates';
+
+    /**
+     * Define the database fields for this data object.
+     */
+    private static array $db = [
         'EmailAddress' => 'Varchar(80)',
         'SigningPassword' => EncryptedDBVarchar::class,
     ];
 
-    private static $casting = [
+    private static array $casting = [
         'SigningCertificateFilename' => 'Varchar(255)',
-        'SigningKeyFilename' => 'Varchar(255)'
+        'SigningKeyFilename' => 'Varchar(255)',
     ];
 
-    public function getSigningCertificateFilename()
+    /**
+     * Provides signing certificate file name for use in summary fields.
+     */
+    public function getSigningCertificateFilename(): string
     {
         return $this->SigningCertificate->exists() ? $this->SigningCertificate->Name : 'File not uploaded';
     }
 
-    public function getSigningKeyFilename()
+    /**
+     * Provides signing key file name for use in summary fields.
+     */
+    public function getSigningKeyFilename(): string
     {
         return $this->SigningKey->exists() ? $this->SigningKey->Name : 'File not uploaded';
     }
@@ -61,9 +72,9 @@ class SmimeSigningCertificate extends DataObject
     ];
 
     /**
-     * @var array
+     * Define summary fields for use in grid field listings for this data object.
      */
-    private static $summary_fields = [
+    private static array $summary_fields = [
         'EmailAddress' => 'Email Address',
         'SigningCertificateFilename' => 'Signing Certificate',
         'SigningKeyFilename' => 'Signing Key',
@@ -82,11 +93,10 @@ class SmimeSigningCertificate extends DataObject
      */
     private static string $uploadFolder = 'SmimeCertificates';
 
-
     /**
      * @inheritDoc
      */
-    public function getCMSFields()
+    public function getCMSFields(): FieldList
     {
         $fields = parent::getCMSFields();
 
@@ -115,20 +125,27 @@ class SmimeSigningCertificate extends DataObject
                     . 'This won\'t be displayed here and is stored in an encrypted form.')
         );
 
-
         return $fields;
     }
 
+    /**
+     * @inheritDoc
+     * @throws ValidationException
+     */
     public function onAfterWrite(): void
     {
         parent::onAfterWrite();
+
         // Check if a signing certificate file has been uploaded
         $this->afterWriteForAsset($this->SigningCertificate);
         $this->afterWriteForAsset($this->SigningKey);
-
     }
 
-    public function validate() {
+    /**
+     * @inheritDoc
+     */
+    public function validate(): ValidationResult
+    {
         $result = parent::validate();
         $existing = SmimeEncryptionCertificate::get()->filter('EmailAddress', $this->EmailAddress)->first();
 
@@ -139,21 +156,11 @@ class SmimeSigningCertificate extends DataObject
         return $result;
     }
 
-    public function canView($member = null)
-    {
-        return Permission::check(EncryptionAdmin::PERMISSION_SMIME_ENCRYPTION_ADMIN);
-    }
-
-    public function canEdit($member = null)
-    {
-        return Permission::check(EncryptionAdmin::PERMISSION_SMIME_ENCRYPTION_ADMIN);
-    }
-
-    public function canCreate($member = null, $context = [])
-    {
-        return Permission::check(EncryptionAdmin::PERMISSION_SMIME_ENCRYPTION_ADMIN);
-    }
-
+    /**
+     * Make asset protected and publish it.
+     *
+     * @throws ValidationException
+     */
     private function afterWriteForAsset(File $asset): void
     {
         if (!$asset->exists()) {
@@ -167,12 +174,18 @@ class SmimeSigningCertificate extends DataObject
         $asset->protectFile();
     }
 
-    public function getField($field)
+    /**
+     * @inheritDoc
+     */
+    public function getField($field): string
     {
         return $this->getEncryptedField($field);
     }
 
-    public function setField($fieldName, $val)
+    /**
+     * @inheritDoc
+     */
+    public function setField($fieldName, $val): SmimeEncryptionCertificate
     {
         return $this->setEncryptedField($fieldName, $val);
     }

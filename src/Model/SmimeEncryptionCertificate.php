@@ -4,38 +4,46 @@ namespace SilverStripe\SmimeForms\Model;
 
 use SilverStripe\AssetAdmin\Forms\UploadField;
 use SilverStripe\Assets\File;
-use SilverStripe\Forms\CompositeValidator;
 use SilverStripe\Forms\FieldList;
-use SilverStripe\Forms\RequiredFields;
 use SilverStripe\ORM\DataObject;
-use SilverStripe\Security\Permission;
-use SilverStripe\SmimeForms\Admin\EncryptionAdmin;
+use SilverStripe\ORM\ValidationResult;
+use SilverStripe\SmimeForms\Traits\CertificateAdminPermissionsTrait;
 
 class SmimeEncryptionCertificate extends DataObject
 {
 
+    use CertificateAdminPermissionsTrait;
+
     /**
-     * @var string
+     * Define the database table name for this data object type.
      */
-    private static $table_name = 'SmimeEncryptionCertificate';
+    private static string $table_name = 'SmimeEncryptionCertificate';
 
-    private static $singular_name = 'Encryption Certificate';
-
-    private static $plural_name = 'Encryption Certificates';
-
-    private static $url_segment = 'encryption';
     /**
-     * @var array
+     * Define the singular name for this data object.
      */
-    private static $db = [
+    private static string $singular_name = 'Encryption Certificate';
+
+    /**
+     * Define the plural name for this data object.
+     */
+    private static string $plural_name = 'Encryption Certificates';
+
+    /**
+     * Define the database fields for this data object.
+     */
+    private static array $db = [
         'EmailAddress' => 'Varchar(80)',
     ];
 
-    private static $casting = [
-        'EncryptionCertificate' => 'Varchar(255)'
+    private static array $casting = [
+        'EncryptionCertificate' => 'Varchar(255)',
     ];
 
-    public function getEncryptionCertificate()
+    /**
+     * Provides encryption certificate file name for use in summary fields.
+     */
+    public function getEncryptionCertificate(): string
     {
         return $this->EncryptionCrt->Exists() ? $this->EncryptionCrt->FileFilename : 'File not uploaded';
     }
@@ -48,9 +56,9 @@ class SmimeEncryptionCertificate extends DataObject
     ];
 
     /**
-     * @var array
+     * Define summary fields for use in grid field listings for this data object.
      */
-    private static $summary_fields = [
+    private static array $summary_fields = [
         'EmailAddress' => 'Email Address',
         'EncryptionCertificate' => 'Encryption Certificate',
     ];
@@ -66,7 +74,6 @@ class SmimeEncryptionCertificate extends DataObject
      * Folder in which uploaded encryption certificates will be stored
      */
     private static string $uploadFolder = 'SmimeCertificates';
-
 
     /**
      * @inheritDoc
@@ -104,7 +111,11 @@ class SmimeEncryptionCertificate extends DataObject
         $encryptionCertificate->protectFile();
     }
 
-    public function validate() {
+    /**
+     * @ineritDoc
+     */
+    public function validate(): ValidationResult
+    {
         $result = parent::validate();
         $existing = SmimeEncryptionCertificate::get()->filter('EmailAddress', $this->EmailAddress)->first();
 
@@ -113,21 +124,6 @@ class SmimeEncryptionCertificate extends DataObject
         }
 
         return $result;
-    }
-
-    public function canView($member = null)
-    {
-        return Permission::check(EncryptionAdmin::PERMISSION_SMIME_ENCRYPTION_ADMIN);
-    }
-
-    public function canEdit($member = null)
-    {
-        return Permission::check(EncryptionAdmin::PERMISSION_SMIME_ENCRYPTION_ADMIN);
-    }
-
-    public function canCreate($member = null, $context = [])
-    {
-        return Permission::check(EncryptionAdmin::PERMISSION_SMIME_ENCRYPTION_ADMIN);
     }
 
 }
