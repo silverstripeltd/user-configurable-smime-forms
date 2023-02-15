@@ -2,6 +2,8 @@
 
 namespace SilverStripe\SmimeForms\Model;
 
+use LeKoala\Encrypt\EncryptedDBVarchar;
+use LeKoala\Encrypt\HasEncryptedFields;
 use SilverStripe\AssetAdmin\Forms\UploadField;
 use SilverStripe\Assets\File;
 use SilverStripe\Forms\FieldList;
@@ -11,6 +13,8 @@ use SilverStripe\SmimeForms\Admin\EncryptionAdmin;
 
 class SmimeSigningCertificate extends DataObject
 {
+
+    use HasEncryptedFields;
 
     /**
      * @var string
@@ -28,7 +32,7 @@ class SmimeSigningCertificate extends DataObject
      */
     private static $db = [
         'EmailAddress' => 'Varchar(80)',
-        'SigningPassword' => 'Varchar(255)',
+        'SigningPassword' => EncryptedDBVarchar::class,
     ];
 
     private static $casting = [
@@ -153,6 +157,16 @@ class SmimeSigningCertificate extends DataObject
         $asset->publishFile();
         $asset->publishSingle();
         $asset->protectFile();
+    }
+
+    public function getField($field)
+    {
+        return $this->getEncryptedField($field);
+    }
+
+    public function setField($fieldName, $val)
+    {
+        return $this->setEncryptedField($fieldName, $val);
     }
 
 }
