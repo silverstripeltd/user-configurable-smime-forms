@@ -1,0 +1,11 @@
+SilverStripe\Assets\File:
+  senderCertificate:
+    Title: 'smime_test_sender'
+    Filename: 'smime_test_sender.crt'
+  senderKey:
+    Title: 'smime_test_sender'
+    Filename: 'smime_test_sender.key'
+
+SilverStripe\SmimeForms\Model\SmimeSigningCertificate:
+  senderCertificate:
+    EmailAddress: sender@example.com

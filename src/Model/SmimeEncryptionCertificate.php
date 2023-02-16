@@ -97,7 +97,7 @@ class SmimeEncryptionCertificate extends DataObject
         parent::onAfterWrite();
 
         // Check if an encryption certificate file has been uploaded
-        $encryptionCertificate = $this->owner->EncryptionCrt;
+        $encryptionCertificate = $this->EncryptionCrt;
 
         if (!$encryptionCertificate) {
             return;

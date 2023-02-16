@@ -137,8 +137,8 @@ class SmimeSigningCertificate extends DataObject
         parent::onAfterWrite();
 
         // Check if a signing certificate file has been uploaded
-        $this->afterWriteForAsset($this->SigningCertificate);
-        $this->afterWriteForAsset($this->SigningKey);
+        $this->afterWriteForAsset($this->SigningCertificate());
+        $this->afterWriteForAsset($this->SigningKey());
     }
 
     /**
@@ -147,7 +147,7 @@ class SmimeSigningCertificate extends DataObject
     public function validate(): ValidationResult
     {
         $result = parent::validate();
-        $existing = SmimeEncryptionCertificate::get()->filter('EmailAddress', $this->EmailAddress)->first();
+        $existing = SmimeSigningCertificate::get()->filter('EmailAddress', $this->EmailAddress)->first();
 
         if ($existing && $existing->ID !== $this->ID) {
             $result->addError('There is already an entry with this email address.');
@@ -177,7 +177,7 @@ class SmimeSigningCertificate extends DataObject
     /**
      * @inheritDoc
      */
-    public function getField($field): string
+    public function getField($field): ?string
     {
         return $this->getEncryptedField($field);
     }
@@ -185,7 +185,7 @@ class SmimeSigningCertificate extends DataObject
     /**
      * @inheritDoc
      */
-    public function setField($fieldName, $val): SmimeEncryptionCertificate
+    public function setField($fieldName, $val): SmimeSigningCertificate
     {
         return $this->setEncryptedField($fieldName, $val);
     }

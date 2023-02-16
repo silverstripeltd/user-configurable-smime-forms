@@ -1,0 +1,22 @@
+DNADesign\Elemental\Models\ElementalArea:
+  registrationForm:
+    OwnerClassName: Page
+
+DNADesign\ElementalUserForms\Model\ElementForm:
+  registration_form:
+    Title: Registration Form
+    ShowTitle: true
+    Parent: =>DNADesign\Elemental\Models\ElementalArea.registrationForm
+    Sort: 1
+
+SilverStripe\UserForms\Model\EditableFormField\EditableTextField:
+  text-field1:
+    Sort: 12
+    Parent: =>DNADesign\ElementalUserForms\Model\ElementForm.registration_form
+    Title: Custom field
+    Placeholder: Custom field
+
+Page:
+  RegistrationForm:
+    Title: "Registration Form"
+    ElementalArea: =>DNADesign\Elemental\Models\ElementalArea.registrationForm
