@@ -177,7 +177,7 @@ class SmimeSigningCertificate extends DataObject
     /**
      * @inheritDoc
      */
-    public function getField($field): ?string
+    public function getField($field): mixed
     {
         return $this->getEncryptedField($field);
     }
