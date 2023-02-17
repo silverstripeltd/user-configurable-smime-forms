@@ -39,15 +39,18 @@ class UserDefinedFormControllerExtensionTest extends SapphireTest
         parent::tearDown();
     }
 
- /*   public function testCheckEncryptionToggle(): void
+    /**
+     * Test the update email function and check that the SMIMEMailer is set up with expected properties.
+     * TODO: Here I want to test that registerSMIMEMailer is called with expected arguments but the mock
+     * doesn't work correctly and need to figure out why.
+     */
+    /*public function testupdateEmail(): void
     {
         // Get the form and set encryption to true
         $form = $this->objFromFixture(ElementForm::class, 'registration_form');
         $form->UseEncryption = true;
 
-        // Set up the controller, passing in the 'owner' form
-        $controller = UserDefinedFormController::create($form);
-
+        // Set up email and recipient
         $recipient = EmailRecipient::create();
         $recipient->EmailAddress = 'recipient@example.com';
         $recipient->write();
@@ -55,20 +58,18 @@ class UserDefinedFormControllerExtensionTest extends SapphireTest
         $email = Email::create();
         $email->setFrom('sender@example.com');
 
-        $mock = $this->getMockBuilder(SMIMEMailer::class)
-            ->setMethods([
-                'setEncryptingCerts',
-                'setSigningCert',
-                'setSigningKey',
-            ])
-        ->getMock();
+        // Set up the controller, and mock the registerSMIMEMailer method so we can assert the arguments used for
+        // setting up the SMIMEMailer.
+        $mockedController = $this->getMockBuilder(UserDefinedFormController::class)
+            ->setConstructorArgs([$form])
+            ->setMethods(['registerSMIMEMailer'])
+            ->getMock();
 
-        // Check that the SMIMEMailer has been
-        $mock->expects($this->once())->method('setEncryptingCerts');
+        // Set up expectations for mocked object
+        $mockedController->expects($this->once())->method('registerSMIMEMailer')->with($this->anything());
 
-        // Call the update email function
-        $controller->updateEmail($email, $recipient);
-
+        // Call the updateEmail function
+        $mockedController->updateEmail($email, $recipient);
     }*/
 
 }

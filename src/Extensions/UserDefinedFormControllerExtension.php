@@ -62,9 +62,21 @@ class UserDefinedFormControllerExtension extends DataExtension
 
         $signingCredentials = $this->checkForSigningCredentials($senderEmailAddress);
 
+        $this->registerSMIMEMailer(
+            $pathToFile,
+            $signingCredentials
+        );
+    }
+
+    /**
+     * Uses injection to replace the standard Mailer class, used for handling the sending of the email,
+     * with an SMIMEMailer instance with encryption/signature properties.
+     */
+    public function registerSMIMEMailer(?string $pathToEncryptionFile, array $signingCredentials): void
+    {
         Injector::inst()->registerService(
             SMIMEMailer::create(
-                $pathToFile,
+                $pathToEncryptionFile,
                 $signingCredentials['certificate'] ?? null,
                 $signingCredentials['key'] ?? null,
                 $signingCredentials['passphrase'] ?? null,
