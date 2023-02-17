@@ -77,14 +77,18 @@ class SmimeEncryptionCertificate extends DataObject
     /**
      * @inheritDoc
      */
-    public function updateCMSFields(FieldList $fields): FieldList
+    public function getCMSFields(): FieldList
     {
+        $fields = parent::getCMSFields();
+
+        $fields->remove('EncryptionCrt');
+
         // Show field for uploading the encryption certificate for this recipient
         $fields->add(
-            UploadField::create('EncryptionCrt', 'S/MIME Encryption Certificate')
+            UploadField::create('EncryptionCrt', 'Certificate File')
                 ->setFolderName(self::$uploadFolder)
                 ->setAllowedExtensions(['crt'])
-                ->setDescription('Upload a valid <pre>.crt</pre> file for this recipient email address. '
+                ->setDescription('Upload a valid <strong>.crt</strong> file for this recipient email address. '
                     . 'This can be either a self-signed certificate or one purchased from a '
                     . 'recognised Certificate Authority.')
         );

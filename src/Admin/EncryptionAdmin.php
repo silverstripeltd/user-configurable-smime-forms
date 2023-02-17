@@ -59,4 +59,14 @@ class EncryptionAdmin extends ModelAdmin implements PermissionProvider
         return Permission::check(EncryptionAdmin::PERMISSION_SMIME_ENCRYPTION_ADMIN);
     }
 
+    /**
+     * @return array
+     */
+    public function providePermissions(): array
+    {
+        return [
+            self::PERMISSION_SMIME_ENCRYPTION_ADMIN => 'Manage S/MIME certificates',
+        ];
+    }
+
 }

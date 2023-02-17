@@ -104,7 +104,7 @@ class SmimeSigningCertificate extends DataObject
 
         // Show field for uploading the encryption certificate for this recipient
         $fields->add(
-            UploadField::create('SigningCertificate', 'S/MIME Signing Certificate')
+            UploadField::create('SigningCertificate', 'Certificate File')
                 ->setFolderName(self::$uploadFolder)
                 ->setAllowedExtensions(['crt'])
                 ->setDescription('Upload a valid <strong>.crt</strong> file for this email address. '
@@ -113,7 +113,7 @@ class SmimeSigningCertificate extends DataObject
         );
 
         $fields->add(
-            UploadField::create('SigningKey', 'S/MIME Signing Key')
+            UploadField::create('SigningKey', 'Certificate Private Key')
                 ->setFolderName(self::$uploadFolder)
                 ->setAllowedExtensions(['key'])
                 ->setDescription('Upload a valid <strong>.key</strong> file for this recipient email address.')

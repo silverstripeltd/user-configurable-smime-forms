@@ -15,40 +15,57 @@ It uses S/MIME encryption.
 To start using this module, just add it as a dependency to your project.
 
 ```
-composer require silverstripe/smime-forms
+composer require silverstripeltd/user-configurable-smime-forms
 ```
 
 ## License
 See [License](license.md)
 
 ## Documentation
-When designing your elemental form you can choose whether encryption is required. This is
+When configuring user forms within the CMS you can specify whether the submitted form data is emailed to a list of Recipients.
+
+This module provides an additional option to encrypt the email. This is
 specifically useful when you are sending emails to known recipients, and requires the recipient's encryption
-certificate (.crt file) containing their public encryption key for encrypting.
-
-### Optional Digital Signing of Emails
-This module supports digital signing of emails, which provides further assurance for the recipient of where the email comes from.
-
-To sign an email you need both the .crt and private .key files. These can be added to a path on the server and set with the following environmental variables:
-
-- `SS_SMIME_SIGN_CERT` The signing certificate for the sender of the email.
-- `SS_SMIME_SIGN_KEY` The private key that goes with the signing certificate.
-- `SS_SMIME_SIGN_PASS` The signing password (if the certificate has been set up with additional password security).
+certificate (.crt file). This module adds an admin section (ModelAdmin) for managing and uploading S/MIME certificates for the purpose of encryption and digital signing of emails.
 
 ### Enable Encryption of Emails
-To enable encryption, go to the **Configuration** tab for your form and check the **Enable S/MIME Encryption** option.
+To enable encryption, go to the **Configuration** tab for your form and check the **Enable S/MIME Encryption** option. With this option set when a form submission is sent to a recipient the system will check for an uploaded encryption certificate for that user. Note: If one does not yet exist the email will be sent unencrypted with a warning (**UNENCRYPTED: CHECK CMS CONFIGURATION**) added to the email subject.
 
 ![](./docs/assets/EncryptionOption.png)
 
-### Adding recipient encryption certificate
-With encryption enabled you can upload an encryption certificate
-when adding recipients. To do this:
-* Go to the **Recipients** tab for your form
-* Add/Edit Recipient
-* Click on the **Email Details** tab
-* Upload a valid CRT file to the **S/MIME Encryption Certificate** field
+### Managing S/MIME Certificates
+This module adds an S/MIME Certificates ModelAdmin to the CMS left hand menu for managing encryption and signing certificates and by default it is available to administrators with full access rights.
+
+To provide specific CMS groups (e.g., IT administrator users) with the ability to manage these certificates, you can add the `Manage S/MIME certificates` permission to their permissions group in the Security section of the CMS.
+
+![](./docs/assets/CertificatesModelAdmin.png)
+
+### Adding recipient encryption certificates
+To add encryption certificates to the CMS:
+* Log into the CMS as an administrator or user/group with the **Manage S/MIME certificates** permission
+* From the CMS left hand menu select **S/MIME Certificates**
+* The default view shows a grid view of uploaded encryption certificates.
+* Click on **Add Encryption Certificate**
+* Enter a valid **Email address**
+* Upload a valid `.crt` file to the **Encryption Certificate** field
+* Click **Create**
 
 ![](./docs/assets/RecipientCertificate.png)
+
+
+### Adding sender certificates for digitally signing emails
+This module supports digital signing of emails, which provides further assurance for the recipient of where the email comes from.
+
+To sign an email you need both the .crt and private .key files. To upload these into the CMS:
+* Log into the CMS as an administrator or user/group with the **Manage S/MIME certificates** permission
+* From the CMS left hand menu select **S/MIME Certificates**
+* Select the **Signing Certificates** tab
+* Click on **Add Signing Certificate**
+* Enter a valid **Email address**
+* Upload a valid `.crt` file to the **Signing Certificate** field
+* Upload a valid `.key` file to the **Signing Key** field
+* Enter the passphrase for the `.key` file (this will not be shown and will be stored in an encrypted format)
+* Click **Create**
 
 ## Maintainers
  * Andrew Dunn <andrew.dunn@silverstripe.com>
