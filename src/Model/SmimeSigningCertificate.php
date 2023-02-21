@@ -42,6 +42,14 @@ class SmimeSigningCertificate extends DataObject
         'SigningPassword' => EncryptedDBVarchar::class,
     ];
 
+    /**
+     * Define has-one relationships
+     */
+    private static array $has_one = [
+        'SigningCertificate' => File::class, // The certificate to be used for signing the email
+        'SigningKey' => File::class,
+    ];
+
     private static array $casting = [
         'SigningCertificateFilename' => 'Varchar(255)',
         'SigningKeyFilename' => 'Varchar(255)',
@@ -62,14 +70,6 @@ class SmimeSigningCertificate extends DataObject
     {
         return $this->SigningKey->exists() ? $this->SigningKey->Name : 'File not uploaded';
     }
-
-    /**
-     * Define has-one relationships
-     */
-    private static array $has_one = [
-        'SigningCertificate' => File::class, // The certificate to be used for signing the email
-        'SigningKey' => File::class,
-    ];
 
     /**
      * Define summary fields for use in grid field listings for this data object.
@@ -216,6 +216,16 @@ class SmimeSigningCertificate extends DataObject
      * @inheritDoc
      */
     public function canCreate($member = null, $context = []): bool
+    {
+        return Permission::check(EncryptionAdmin::PERMISSION_SMIME_ENCRYPTION_ADMIN);
+    }
+
+    /**
+     * Permissions for deleting certificates.
+     *
+     * @inheritDoc
+     */
+    public function canDelete($member = null, $context = []): bool
     {
         return Permission::check(EncryptionAdmin::PERMISSION_SMIME_ENCRYPTION_ADMIN);
     }

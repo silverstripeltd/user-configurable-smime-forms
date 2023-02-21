@@ -77,7 +77,7 @@ class SmimeEncryptionCertificateTest extends SapphireTest
 
         $file = File::get_by_id($crtFile->ID);
 
-        self::assertEquals('protected', $file->getVisibility());
+        $this->assertEquals('protected', $file->getVisibility());
     }
 
 }

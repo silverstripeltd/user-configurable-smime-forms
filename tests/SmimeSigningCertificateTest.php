@@ -82,15 +82,17 @@ class SmimeSigningCertificateTest extends SapphireTest
         $certificate->SigningKeyID = $keyFile->ID;
         $certificate->write();
 
-        self::assertEquals('protected', $crtFile->getVisibility());
-        self::assertEquals('protected', $keyFile->getVisibility());
+        $this->assertEquals('protected', $crtFile->getVisibility());
+        $this->assertEquals('protected', $keyFile->getVisibility());
     }
 
     public function testKeyPassphraseIsEncrypted(): void
     {
+        $signingPassword = 'Test123!';
+
         $certificate = SmimeSigningCertificate::create();
         $certificate->EmailAddress = 'sender@example.com';
-        $certificate->SigningPassword = 'Test123!';
+        $certificate->SigningPassword = $signingPassword;
         $certificate->write();
 
         // Do a direct query here so that we can get the value as it is
@@ -99,10 +101,13 @@ class SmimeSigningCertificateTest extends SapphireTest
         $sqlQuery->setFrom('SmimeSigningCertificate');
         $sqlQuery->addWhere(['ID = ?' => $certificate->ID]);
         $result = $sqlQuery->execute();
-        $signingPassword = $result->first()['SigningPassword'];
+        $signingPasswordAsStored = $result->first()['SigningPassword'];
 
-        var_dump(sprintf('Passphrase has encrypted value: %s', $signingPassword));
-        self::assertNotEquals('Test123!', $signingPassword);
+        // Check that stored encrypted value is not the same as set value
+        $this->assertNotEquals($signingPassword, $signingPasswordAsStored);
+
+        // Check that when we retrieve the value it is decrypted as expected
+        $this->assertEquals($signingPassword, $certificate->SigningPassword);
     }
 
 }

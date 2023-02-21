@@ -4,6 +4,7 @@ namespace SilverStripe\SmimeForms\Extensions;
 
 use Exception;
 use Psr\Container\NotFoundExceptionInterface;
+use SilverStripe\Assets\Dev\TestAssetStore;
 use SilverStripe\Assets\File;
 use SilverStripe\Assets\Flysystem\FlysystemAssetStore;
 use SilverStripe\Assets\Storage\AssetStore;
@@ -98,11 +99,15 @@ class UserDefinedFormControllerExtension extends DataExtension
     {
         /** @var FlysystemAssetStore $flysystem */
         $flysystem = Injector::inst()->get(AssetStore::class);
+
+        // Used for test purposes so that we can verify the path exists
+        $basePath = $flysystem instanceof TestAssetStore ? $flysystem::base_path() : ASSETS_PATH;
+
         $dbFile = $record->File;
 
         $protectedPath = sprintf(
             '%s/.protected/%s',
-            ASSETS_PATH,
+            $basePath,
             $flysystem->getMetadata(
                 $dbFile->Filename,
                 $dbFile->Hash,
@@ -164,11 +169,11 @@ class UserDefinedFormControllerExtension extends DataExtension
             return [];
         }
 
-        $certificatePath = $senderSigningCertificate->SigningCertificate ?
+        $certificatePath = $senderSigningCertificate->SigningCertificate->exists() ?
             $this->getFilePath($senderSigningCertificate->SigningCertificate)
             : null;
 
-        $keyPath = $senderSigningCertificate->SigningKey ?
+        $keyPath = $senderSigningCertificate->SigningKey->exists() ?
             $this->getFilePath($senderSigningCertificate->SigningKey)
             : null;
 

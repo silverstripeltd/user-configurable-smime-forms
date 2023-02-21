@@ -159,4 +159,14 @@ class SmimeEncryptionCertificate extends DataObject
         return Permission::check(EncryptionAdmin::PERMISSION_SMIME_ENCRYPTION_ADMIN);
     }
 
+    /**
+     * Permissions for deleting certificates.
+     *
+     * @inheritDoc
+     */
+    public function canDelete($member = null, $context = []): bool
+    {
+        return Permission::check(EncryptionAdmin::PERMISSION_SMIME_ENCRYPTION_ADMIN);
+    }
+
 }
