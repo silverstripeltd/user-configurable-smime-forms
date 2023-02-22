@@ -120,10 +120,15 @@ class SmimeSigningCertificate extends DataObject
         );
 
         $fields->add(
-            PasswordField::create('SigningPassword', 'Key Passphrase')
+            $password = PasswordField::create('SigningPassword', 'Key Passphrase')
                 ->setDescription('This is the passphrase entered when the <strong>.key</strong> file was created. '
-                    . 'This won\'t be displayed here and is stored in an encrypted form.')
+                    . 'This is stored in an encrypted form and, once entered, this field will be disabled.')
         );
+
+        // disable the password field if the password is set
+        if ($this->SigningPassword !== null) {
+            $password->setDisabled(true);
+        }
 
         return $fields;
     }
