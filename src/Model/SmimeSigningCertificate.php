@@ -106,19 +106,19 @@ class SmimeSigningCertificate extends DataObject
         $fields->removeByName('SigningPassword');
 
 
-        $certificateKeypassword = PasswordField::create('SigningPassword', 'Key Passphrase')
+        $certificateKeyPassword = PasswordField::create('SigningPassword', 'Key Passphrase')
             ->setDescription('This is the passphrase entered when the <strong>.key</strong> file was created. '
                 . 'This is stored in an encrypted form and, once entered, this field will be disabled.');
 
         // If a value is already set then show a read only field.
         // Note, we also need to rename the field otherwise the value will get handled by getEncryptedField
         if ($this->SigningPassword !== null) {
-            $certificateKeypassword = ReadonlyField::create('SigningPasswordReadOnly', 'Key Passphrase')
+            $certificateKeyPassword = ReadonlyField::create('SigningPasswordReadOnly', 'Key Passphrase')
                 ->setValue('********')
                 ->performReadonlyTransformation();
         }
 
-        // Show field for uploading the encryption certificate for this recipient
+        // Show fields for uploading the signing certificate and key for the email address, along with signing password.
         $fields->addFieldsToTab(
             'Root.Main',
             [
@@ -132,7 +132,7 @@ class SmimeSigningCertificate extends DataObject
                     ->setFolderName(self::$uploadFolder)
                     ->setAllowedExtensions(['key'])
                     ->setDescription('Upload a valid <strong>.key</strong> file for this recipient email address.'),
-                $certificateKeypassword,
+                $certificateKeyPassword,
             ]
         );
 
