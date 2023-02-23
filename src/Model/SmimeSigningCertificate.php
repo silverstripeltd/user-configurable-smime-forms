@@ -6,8 +6,11 @@ use LeKoala\Encrypt\EncryptedDBVarchar;
 use LeKoala\Encrypt\HasEncryptedFields;
 use SilverStripe\AssetAdmin\Forms\UploadField;
 use SilverStripe\Assets\File;
+use SilverStripe\Forms\CompositeValidator;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\PasswordField;
+use SilverStripe\Forms\ReadonlyField;
+use SilverStripe\Forms\RequiredFields;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\ValidationException;
 use SilverStripe\ORM\ValidationResult;
@@ -102,33 +105,36 @@ class SmimeSigningCertificate extends DataObject
 
         $fields->removeByName('SigningPassword');
 
-        // Show field for uploading the encryption certificate for this recipient
-        $fields->add(
-            UploadField::create('SigningCertificate', 'Certificate File')
-                ->setFolderName(self::$uploadFolder)
-                ->setAllowedExtensions(['crt'])
-                ->setDescription('Upload a valid <strong>.crt</strong> file for this email address. '
-                    . 'This can be either a self-signed certificate or one purchased from a '
-                    . 'recognised Certificate Authority.')
-        );
 
-        $fields->add(
-            UploadField::create('SigningKey', 'Certificate Private Key')
-                ->setFolderName(self::$uploadFolder)
-                ->setAllowedExtensions(['key'])
-                ->setDescription('Upload a valid <strong>.key</strong> file for this recipient email address.')
-        );
+        $certificateKeypassword = PasswordField::create('SigningPassword', 'Key Passphrase')
+            ->setDescription('This is the passphrase entered when the <strong>.key</strong> file was created. '
+                . 'This is stored in an encrypted form and, once entered, this field will be disabled.');
 
-        $fields->add(
-            $password = PasswordField::create('SigningPassword', 'Key Passphrase')
-                ->setDescription('This is the passphrase entered when the <strong>.key</strong> file was created. '
-                    . 'This is stored in an encrypted form and, once entered, this field will be disabled.')
-        );
-
-        // disable the password field if the password is set
+        // If a value is already set then show a read only field.
+        // Note, we also need to rename the field otherwise the value will get handled by getEncryptedField
         if ($this->SigningPassword !== null) {
-            $password->setDisabled(true);
+            $certificateKeypassword = ReadonlyField::create('SigningPasswordReadOnly', 'Key Passphrase')
+                ->setValue('********')
+                ->performReadonlyTransformation();
         }
+
+        // Show field for uploading the encryption certificate for this recipient
+        $fields->addFieldsToTab(
+            'Root.Main',
+            [
+                UploadField::create('SigningCertificate', 'Certificate File')
+                    ->setFolderName(self::$uploadFolder)
+                    ->setAllowedExtensions(['crt'])
+                    ->setDescription('Upload a valid <strong>.crt</strong> file for this email address. '
+                        . 'This can be either a self-signed certificate or one purchased from a '
+                        . 'recognised Certificate Authority.'),
+                UploadField::create('SigningKey', 'Certificate Private Key')
+                    ->setFolderName(self::$uploadFolder)
+                    ->setAllowedExtensions(['key'])
+                    ->setDescription('Upload a valid <strong>.key</strong> file for this recipient email address.'),
+                $certificateKeypassword,
+            ]
+        );
 
         return $fields;
     }
@@ -185,6 +191,20 @@ class SmimeSigningCertificate extends DataObject
     public function getField($field): mixed
     {
         return $this->getEncryptedField($field);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getCMSCompositeValidator(): CompositeValidator
+    {
+        $compositeValidator = parent::getCMSCompositeValidator();
+
+        $compositeValidator->addValidator(RequiredFields::create([
+            'EmailAddress',
+        ]));
+
+        return $compositeValidator;
     }
 
     /**
