@@ -1,19 +1,38 @@
 {
     "name": "silverstripeltd/user-configurable-smime-forms",
-    "description": "A skeleton for SilverStripe modules.",
+    "description": "A module for extending user forms, so that form submissions can be emailed with S/MIME encryption.",
     "type": "silverstripe-vendormodule",
     "keywords": [
         "silverstripe",
-        "CMS"
+        "CMS",
+        "S/MIME",
+        "encryption"
+    ],
+    "authors": [
+        {
+            "name": "Silverstripe Ltd",
+            "homepage": "http://silverstripe.com"
+        }
     ],
     "license": "BSD-3-Clause",
     "require": {
-        "silverstripe/framework": "^4.0",
-        "silverstripe/admin": "^1.0"
+        "php": "^8.0 || ^8.1",
+        "silverstripe/vendor-plugin": "^1",
+        "silverstripe/framework": "^4.11",
+        "silverstripe/admin": "^1.11",
+        "silverstripe/userforms": "^5.13",
+        "dnadesign/silverstripe-elemental": "^4.4",
+        "silverstripe/smime": "dev-master",
+        "dnadesign/silverstripe-elemental-userforms": "^3.2",
+        "silverstripe/asset-admin": "^1.11",
+        "unclecheese/display-logic": "^2.0",
+        "lekoala/silverstripe-encrypt": "^3.4"
     },
     "require-dev": {
-        "phpunit/phpunit": "^5.7",
-        "squizlabs/php_codesniffer": "^3.0"
+        "phpunit/phpunit": "^9",
+        "squizlabs/php_codesniffer": "^3.0",
+        "php-parallel-lint/php-parallel-lint": "^1.2",
+        "slevomat/coding-standard": "~6.0"
     },
     "autoload": {
         "psr-4": {
@@ -27,8 +46,25 @@
         },
         "expose": [
             "client/dist"
+        ],
+        "project-files-installed": [
+            "phpcs.xml",
+            "phpunit.xml"
         ]
     },
     "minimum-stability": "dev",
-    "prefer-stable": true
+    "prefer-stable": true,
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/silverstripeltd/silverstripe-smime.git"
+        }
+    ],
+    "config": {
+        "allow-plugins": {
+            "composer/installers": true,
+            "dealerdirect/phpcodesniffer-composer-installer": true,
+            "silverstripe/vendor-plugin": true
+        }
+    }
 }

@@ -1,6 +1,9 @@
 # SilverStripe SMIME Forms
 
-This module adds the ability to encrypt user form submissions prior to emailing to recipients.
+This module provides an extension to [Silverstripe Elemental User Forms](https://github.com/dnadesign/silverstripe-elemental-userforms)
+that allows you to choose whether or not the emails for form submissions should be encrypted and/or digitally signed, for added security.
+
+It uses S/MIME encryption.
 
 ## Requirements
 
@@ -9,49 +12,60 @@ This module adds the ability to encrypt user form submissions prior to emailing 
 * SilverStripe S/Mime
 
 ## Installation
-Add some installation instructions here, having a 1 line composer copy and paste is useful.
-Here is a composer command to create a new module project. Ensure you read the
-['publishing a module'](https://docs.silverstripe.org/en/developer_guides/extending/how_tos/publish_a_module/) guide
-and update your module's composer.json to designate your code as a SilverStripe module.
+To start using this module, just add it as a dependency to your project.
 
 ```
-composer require silverstripe/smime-forms
+composer require silverstripeltd/user-configurable-smime-forms
 ```
-
-**Note:** When you have completed your module, submit it to Packagist or add it as a VCS repository to your
-project's composer.json, pointing to the private repository URL.
 
 ## License
 See [License](license.md)
 
-We have included a 3-clause BSD license you can use as a default. We advocate for the BSD license as
-it is one of the most permissive and open licenses.
-
-Feel free to alter the [license.md](license.md) to suit if you wan to use an alternative license.
-You can use [choosealicense.com](http://choosealicense.com) to help pick a suitable license for your project.
-
 ## Documentation
- * [Documentation readme](docs/en/readme.md)
+When configuring user forms within the CMS you can specify whether the submitted form data is emailed to a list of Recipients.
 
-Add links into your docs/<language> folder here unless your module only requires minimal documentation
-in that case, add here and remove the docs folder. You might use this as a quick table of content if you
-mhave multiple documentation pages.
+This module provides an additional option to encrypt the email. This is
+specifically useful when you are sending emails to known recipients, and requires the recipient's encryption
+certificate (.crt file). This module adds an admin section (ModelAdmin) for managing and uploading S/MIME certificates for the purpose of encryption and digital signing of emails.
 
-## Example configuration (optional)
-If your module makes use of the config API in SilverStripe it's a good idea to provide an example config
- here that will get the module working out of the box and expose the user to the possible configuration options.
+### Enable Encryption of Emails
+To enable encryption, go to the **Configuration** tab for your form and check the **Enable S/MIME Encryption** option. With this option set when a form submission is sent to a recipient the system will check for an uploaded encryption certificate for that user. Note: If one does not yet exist the email will be sent unencrypted with a warning (**UNENCRYPTED: CHECK CMS CONFIGURATION**) added to the email subject.
 
-Provide a yaml code example where possible.
+![](./docs/assets/EncryptionOption.png)
 
-```yaml
+### Managing S/MIME Certificates
+This module adds an S/MIME Certificates ModelAdmin to the CMS left hand menu for managing encryption and signing certificates and by default it is available to administrators with full access rights.
 
-Page:
-  config_option: true
-  another_config:
-    - item1
-    - item2
+To provide specific CMS groups (e.g., IT administrator users) with the ability to manage these certificates, you can add the `Manage S/MIME certificates` permission to their permissions group in the Security section of the CMS.
 
-```
+![](./docs/assets/CertificatesModelAdmin.png)
+
+### Adding recipient encryption certificates
+To add encryption certificates to the CMS:
+* Log into the CMS as an administrator or user/group with the **Manage S/MIME certificates** permission
+* From the CMS left hand menu select **S/MIME Certificates**
+* The default view shows a grid view of uploaded encryption certificates.
+* Click on **Add Encryption Certificate**
+* Enter a valid **Email address**
+* Upload a valid `.crt` file to the **Encryption Certificate** field
+* Click **Create**
+
+![](./docs/assets/RecipientCertificate.png)
+
+
+### Adding sender certificates for digitally signing emails
+This module supports digital signing of emails, which provides further assurance for the recipient of where the email comes from.
+
+To sign an email you need both the .crt and private .key files. To upload these into the CMS:
+* Log into the CMS as an administrator or user/group with the **Manage S/MIME certificates** permission
+* From the CMS left hand menu select **S/MIME Certificates**
+* Select the **Signing Certificates** tab
+* Click on **Add Signing Certificate**
+* Enter a valid **Email address**
+* Upload a valid `.crt` file to the **Signing Certificate** field
+* Upload a valid `.key` file to the **Signing Key** field
+* Enter the passphrase for the `.key` file (this will not be shown and will be stored in an encrypted format)
+* Click **Create**
 
 ## Maintainers
  * Andrew Dunn <andrew.dunn@silverstripe.com>
