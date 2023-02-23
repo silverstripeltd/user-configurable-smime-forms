@@ -5,8 +5,10 @@
     "keywords": [
         "silverstripe",
         "CMS",
-        "S/MIME",
-        "encryption"
+        "smime",
+        "encryption",
+        "forms",
+        "email"
     ],
     "authors": [
         {
