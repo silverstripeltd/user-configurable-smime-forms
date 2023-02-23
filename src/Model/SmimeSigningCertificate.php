@@ -114,8 +114,7 @@ class SmimeSigningCertificate extends DataObject
         // Note, we also need to rename the field otherwise the value will get handled by getEncryptedField
         if ($this->SigningPassword !== null) {
             $certificateKeyPassword = ReadonlyField::create('SigningPasswordReadOnly', 'Key Passphrase')
-                ->setValue('********')
-                ->performReadonlyTransformation();
+                ->setValue('********');
         }
 
         // Show fields for uploading the signing certificate and key for the email address, along with signing password.
