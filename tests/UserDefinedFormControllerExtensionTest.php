@@ -57,7 +57,7 @@ class UserDefinedFormControllerExtensionTest extends SapphireTest
 
     protected function tearDown(): void
     {
-        // TestAssetStore::reset();
+        TestAssetStore::reset();
 
         parent::tearDown();
     }
