@@ -222,8 +222,6 @@ class UserDefinedFormControllerExtensionTest extends SapphireTest
         $form = $this->objFromFixture(ElementForm::class, 'registration_form');
         $form->UseEncryption = true;
 
-        $emailField = $this->objFromFixture(EditableEmailField::class, 'email-field1');
-
         $email = Email::create();
         $email->setFrom('sender@example.com');
         $email->setSubject('Registration Form');
@@ -238,7 +236,6 @@ class UserDefinedFormControllerExtensionTest extends SapphireTest
 
         // An email recipient without encryption certificate will have updated subject
         $this->assertEquals('Registration Form [UNENCRYPTED: CHECK CMS CONFIGURATION]', $email->getSubject());
-
     }
 
     /**

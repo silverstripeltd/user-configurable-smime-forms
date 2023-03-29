@@ -15,21 +15,18 @@ use SilverStripe\ORM\DataExtension;
 use SilverStripe\SMIME\Control\SMIMEMailer;
 use SilverStripe\SmimeForms\Model\SmimeEncryptionCertificate;
 use SilverStripe\SmimeForms\Model\SmimeSigningCertificate;
-use SilverStripe\UserForms\Control\UserDefinedFormController;
 use SilverStripe\UserForms\Model\Recipient\EmailRecipient;
 
 /**
  * Class UserDefinedFormControllerExtension
  *
- * An extension for {@see UserDefinedForm} class to check whether the form submission needs
+ * An extension for {@see UserDefinedFormController} class to check whether the form submission needs
  * to be encrypted. If so, it will replace the standard Mailer with a {@see SMIMEMailer}.
  *
  * @package SilverStripe\SmimeForms\Extensions
  */
 class UserDefinedFormControllerExtension extends DataExtension
 {
-
-    private $defaultMailer = null;
 
     /**
      * Called as an extension hook from {@see UserDefinedFormController}.
@@ -66,7 +63,6 @@ class UserDefinedFormControllerExtension extends DataExtension
 
                 $email->setSubject(sprintf('%s %s', $subject, $encryptionMessage));
             }
-
 
             $senderEmailAddress = array_key_first($email->getFrom());
 
