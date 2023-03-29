@@ -212,6 +212,10 @@ class UserDefinedFormControllerExtensionTest extends SapphireTest
         $controller->updateEmail($email, $recipient);
     }
 
+    /**
+     * When email recipients are missing an encryption certificate the subject
+     * is appended with a warning to configure CMS.
+     */
     public function testUpdateEmailSubjectWhenEmailWithoutEncryptionCertificate(): void
     {
         // Get the form and set encryption to true
