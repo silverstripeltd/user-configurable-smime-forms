@@ -12,6 +12,7 @@ use SilverStripe\SmimeForms\Extensions\UserDefinedFormControllerExtension;
 use SilverStripe\SmimeForms\Model\SmimeEncryptionCertificate;
 use SilverStripe\SmimeForms\Model\SmimeSigningCertificate;
 use SilverStripe\UserForms\Control\UserDefinedFormController;
+use SilverStripe\UserForms\Model\EditableFormField\EditableEmailField;
 use SilverStripe\UserForms\Model\Recipient\EmailRecipient;
 
 class UserDefinedFormControllerExtensionTest extends SapphireTest
@@ -209,6 +210,90 @@ class UserDefinedFormControllerExtensionTest extends SapphireTest
             );
 
         $controller->updateEmail($email, $recipient);
+    }
+
+    /**
+     * When email recipients are missing an encryption certificate the subject
+     * is appended with a warning to configure CMS.
+     */
+    public function testUpdateEmailSubjectWhenEmailWithoutEncryptionCertificate(): void
+    {
+        // Get the form and set encryption to true
+        $form = $this->objFromFixture(ElementForm::class, 'registration_form');
+        $form->UseEncryption = true;
+
+        $email = Email::create();
+        $email->setFrom('sender@example.com');
+        $email->setSubject('Registration Form');
+
+        $recipient = EmailRecipient::create();
+        $recipient->EmailAddress = 'other-recipient@example.com';
+        $recipient->EmailFrom = 'sender@example.com';
+        $recipient->write();
+
+        $controller = UserDefinedFormController::create($form);
+        $controller->updateEmail($email, $recipient);
+
+        // An email recipient without encryption certificate will have updated subject
+        $this->assertEquals('Registration Form [UNENCRYPTED: CHECK CMS CONFIGURATION]', $email->getSubject());
+    }
+
+    /**
+     * When recipients of forms are dynamic (from an input field) then
+     * encryption should be skipped.
+     */
+    public function testUpdateEmailWithDynamicRecipient(): void
+    {
+        // Get the form and set encryption to true
+        $form = $this->objFromFixture(ElementForm::class, 'registration_form');
+        $form->UseEncryption = true;
+
+        $emailField = $this->objFromFixture(EditableEmailField::class, 'email-field1');
+
+        // Set up email and dynamic recipient (email taken from email field in form)
+        $recipient = EmailRecipient::create();
+        $recipient->EmailAddress = 'dynamic-recipient@example.com';
+        $recipient->SendEmailToFieldID = $emailField->ID;
+        $recipient->EmailFrom = 'sender@example.com';
+        $recipient->write();
+
+        $email = Email::create();
+        $email->setFrom('sender@example.com');
+        $email->setSubject('Registration Form');
+
+        // Mock the extension we are testing and inject it
+        $mockedExtension = $this->getMockBuilder(UserDefinedFormControllerExtension::class)
+            ->onlyMethods(['registerSMIMEMailer'])
+            ->getMock();
+
+        Injector::inst()->registerService($mockedExtension, UserDefinedFormControllerExtension::class);
+
+        // Instantiate the controller which will pick up our mocked extension
+        $controller = UserDefinedFormController::create($form);
+
+        // Set up expectations for calling the mocked registerSMIMEMailer function
+        // to check file paths and expected signing credentials.
+        // Since we can't check on the full system path a callback is used for each argument so
+        // that we can make partial assertions.
+        $mockedExtension
+            ->expects($this->once())
+            ->method('registerSMIMEMailer')
+            ->with(
+                $this->callback(function ($encryptionFilePath) {
+                    $this->assertNull($encryptionFilePath);
+
+                    return true;
+                }),
+                $this->callback(function ($signingCertificate) {
+                    $this->assertEquals([], $signingCertificate);
+
+                    return true;
+                })
+            );
+
+        $controller->updateEmail($email, $recipient);
+
+        $this->assertEquals('Registration Form', $email->getSubject()); // No warning and no encryption
     }
 
 }

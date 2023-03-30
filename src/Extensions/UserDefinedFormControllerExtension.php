@@ -20,7 +20,7 @@ use SilverStripe\UserForms\Model\Recipient\EmailRecipient;
 /**
  * Class UserDefinedFormControllerExtension
  *
- * An extension for {@see UserDefinedForm} class to check whether the form submission needs
+ * An extension for {@see UserDefinedFormController} class to check whether the form submission needs
  * to be encrypted. If so, it will replace the standard Mailer with a {@see SMIMEMailer}.
  *
  * @package SilverStripe\SmimeForms\Extensions
@@ -29,7 +29,7 @@ class UserDefinedFormControllerExtension extends DataExtension
 {
 
     /**
-     * Called as an extension hook from {@see UserDefinedForm}.
+     * Called as an extension hook from {@see UserDefinedFormController}.
      *
      * @throws NotFoundExceptionInterface
      * @throws Exception
@@ -41,28 +41,35 @@ class UserDefinedFormControllerExtension extends DataExtension
             return;
         }
 
+        // If the To field is a dynamic field then allow email to be sent without encryption or warning
+        $skipEncryption = $recipient->SendEmailToField()->exists();
+
         $pathToFile = null;
+        $signingCredentials = [];
 
-        // Check for a recipient encryption certificate, with a matching email address, and set path to file
-        $encryptionCertificateEntry = SmimeEncryptionCertificate::get()
-            ->filter('EmailAddress', $recipient->EmailAddress)->first();
+        if (!$skipEncryption) {
+            // Check for a recipient encryption certificate, with a matching email address, and set path to file
+            $encryptionCertificateEntry = SmimeEncryptionCertificate::get()
+                ->filter('EmailAddress', $recipient->EmailAddress)->first();
 
-        if ($encryptionCertificateEntry && $encryptionCertificateEntry->EncryptionCrt->exists()) {
-            $pathToFile = $this->getFilePath($encryptionCertificateEntry->EncryptionCrt);
+            if ($encryptionCertificateEntry && $encryptionCertificateEntry->EncryptionCrt->exists()) {
+                $pathToFile = $this->getFilePath($encryptionCertificateEntry->EncryptionCrt);
+            }
+
+            // If no encryption certificate was found then proceed but append a warning to the email.
+            if (!$pathToFile) {
+                $subject = $email->getSubject();
+                $encryptionMessage = '[UNENCRYPTED: CHECK CMS CONFIGURATION]';
+
+                $email->setSubject(sprintf('%s %s', $subject, $encryptionMessage));
+            }
+
+            $senderEmailAddress = array_key_first($email->getFrom());
+
+            $signingCredentials = $this->checkForSigningCredentials($senderEmailAddress);
         }
 
-        // If no encryption certificate was found then proceed but append a warning to the email.
-        if (!$pathToFile) {
-            $subject = $email->getSubject();
-            $encryptionMessage = '[UNENCRYPTED: CHECK CMS CONFIGURATION]';
-
-            $email->setSubject(sprintf('%s %s', $subject, $encryptionMessage));
-        }
-
-        $senderEmailAddress = array_key_first($email->getFrom());
-
-        $signingCredentials = $this->checkForSigningCredentials($senderEmailAddress);
-
+        // Re-registering SmimeMailer for each recipient with appropriate encryption/signing details
         $this->registerSMIMEMailer(
             $pathToFile,
             $signingCredentials

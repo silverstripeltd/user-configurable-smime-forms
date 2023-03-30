@@ -16,6 +16,14 @@ SilverStripe\UserForms\Model\EditableFormField\EditableTextField:
     Title: Custom field
     Placeholder: Custom field
 
+SilverStripe\UserForms\Model\EditableFormField\EditableEmailField:
+  email-field1:
+    Name: Email
+    Sort: 13
+    Parent: =>DNADesign\ElementalUserForms\Model\ElementForm.registration_form
+    Title: Email
+    Placeholder: Enter your email
+
 Page:
   RegistrationForm:
     Title: "Registration Form"
