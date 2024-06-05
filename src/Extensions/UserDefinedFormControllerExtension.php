@@ -2,17 +2,15 @@
 
 namespace SilverStripe\SmimeForms\Extensions;
 
-use Exception;
 use Psr\Container\NotFoundExceptionInterface;
 use SilverStripe\Assets\Dev\TestAssetStore;
 use SilverStripe\Assets\File;
 use SilverStripe\Assets\Flysystem\FlysystemAssetStore;
 use SilverStripe\Assets\Storage\AssetStore;
 use SilverStripe\Control\Email\Email;
-use SilverStripe\Control\Email\Mailer;
 use SilverStripe\Core\Injector\Injector;
 use SilverStripe\ORM\DataExtension;
-use SilverStripe\SMIME\Control\SMIMEMailer;
+use SilverStripe\SmimeForms\Model\SmimeEmail;
 use SilverStripe\SmimeForms\Model\SmimeEncryptionCertificate;
 use SilverStripe\SmimeForms\Model\SmimeSigningCertificate;
 use SilverStripe\UserForms\Model\Recipient\EmailRecipient;
@@ -20,8 +18,9 @@ use SilverStripe\UserForms\Model\Recipient\EmailRecipient;
 /**
  * Class UserDefinedFormControllerExtension
  *
- * An extension for {@see UserDefinedFormController} class to check whether the form submission needs
- * to be encrypted. If so, it will replace the standard Mailer with a {@see SMIMEMailer}.
+ * An extension for {@see UserDefinedFormController} class to check whether the
+ * form submission needs to be encrypted. If so, this will use the SmimeEmail
+ * class to both sign and encrypt the email prior to sending it using symfony/Mailer.
  *
  * @package SilverStripe\SmimeForms\Extensions
  */
@@ -29,23 +28,54 @@ class UserDefinedFormControllerExtension extends DataExtension
 {
 
     /**
-     * Called as an extension hook from {@see UserDefinedFormController}.
+     * Uses Injector to fully override the Email class with
+     * the SMimeEmail class if a form enables email encryption.
      *
+     * We use the 'updateEmailData' hook to do this as the Email
+     * instance is yet to be created at this point of the process.
+     *
+     * Meaning once this hook is executed the next Email instance
+     * that is created will be of type SMimeEmail.
+     *
+     * @param array $emailData
+     * @param array $attachments
+     * @return void
+     */
+    public function updateEmailData(array $emailData, array $attachments): void
+    {
+        // Early exit if this form should not be encrypted
+        if (!$this->owner->isEncryptEmail()) {
+            return;
+        }
+
+        // Otherwise, use Injector to fully override Email with SMimeEmail
+        Injector::inst()->registerService(new SmimeEmail(), Email::class);
+    }
+
+    /**
+     * Uses the 'updateEmail' hook to set the signing credentials
+     * and encryption certificate on the given SMimeEmail instance.
+     *
+     * It extracts the credentials and certificates from the given
+     * EmailRecipient and uses these to sign and encrypt the email.
+     *
+     * @param Email $email
+     * @param EmailRecipient $recipient
+     * @return void
      * @throws NotFoundExceptionInterface
-     * @throws Exception
      */
     public function updateEmail(Email $email, EmailRecipient $recipient): void
     {
-        // Check form configuration to see if the email should be encrypted
-        if (!$this->owner->encryptEmail()) {
+        // Early exit if this form should not be encrypted
+        if (!$this->owner->isEncryptEmail()) {
             return;
         }
 
         // If the To field is a dynamic field then allow email to be sent without encryption or warning
         $skipEncryption = $recipient->SendEmailToField()->exists();
 
-        $pathToFile = null;
-        $signingCredentials = [];
+        $encryptionFilePath = null;
+        $signingCredentials = null;
 
         if (!$skipEncryption) {
             // Check for a recipient encryption certificate, with a matching email address, and set path to file
@@ -53,44 +83,28 @@ class UserDefinedFormControllerExtension extends DataExtension
                 ->filter('EmailAddress', $recipient->EmailAddress)->first();
 
             if ($encryptionCertificateEntry && $encryptionCertificateEntry->EncryptionCrt->exists()) {
-                $pathToFile = $this->getFilePath($encryptionCertificateEntry->EncryptionCrt);
+                $encryptionFilePath = $this->getFilePath($encryptionCertificateEntry->EncryptionCrt);
             }
 
             // If no encryption certificate was found then proceed but append a warning to the email.
-            if (!$pathToFile) {
+            if (!$encryptionFilePath) {
                 $subject = $email->getSubject();
                 $encryptionMessage = '[UNENCRYPTED: CHECK CMS CONFIGURATION]';
 
                 $email->setSubject(sprintf('%s %s', $subject, $encryptionMessage));
             }
 
-            $senderEmailAddress = array_key_first($email->getFrom());
+            // Get the Sender Email address
+            $address = $email->getFrom();
+            $senderEmailAddress = $address && count($address) > 0 ? $address[0]->getAddress() : '';
 
+            // Get the credentials for signing an Email
             $signingCredentials = $this->checkForSigningCredentials($senderEmailAddress);
         }
 
-        // Re-registering SmimeMailer for each recipient with appropriate encryption/signing details
-        $this->registerSMIMEMailer(
-            $pathToFile,
-            $signingCredentials
-        );
-    }
-
-    /**
-     * Uses injection to replace the standard Mailer class, used for handling the sending of the email,
-     * with an SMIMEMailer instance with encryption/signature properties.
-     */
-    public function registerSMIMEMailer(?string $pathToEncryptionFile, array $signingCredentials): void
-    {
-        Injector::inst()->registerService(
-            SMIMEMailer::create(
-                $pathToEncryptionFile,
-                $signingCredentials['certificate'] ?? null,
-                $signingCredentials['key'] ?? null,
-                $signingCredentials['passphrase'] ?? null,
-            ),
-            Mailer::class
-        );
+        // Set email signing and encryption properties
+        $email->setSigningCredentials($signingCredentials);
+        $email->setEncryptionFilePath($encryptionFilePath);
     }
 
     /**
@@ -112,14 +126,20 @@ class UserDefinedFormControllerExtension extends DataExtension
 
         $dbFile = $record->File;
 
-        $protectedPath = sprintf(
-            '%s/.protected/%s',
-            $basePath,
-            $flysystem->getMetadata(
+        $fileUrl = str_replace(
+            '/assets/',
+            '',
+            $flysystem->getAsURL(
                 $dbFile->Filename,
                 $dbFile->Hash,
                 $dbFile->Variant
-            )['path']
+            )
+        );
+
+        $protectedPath = sprintf(
+            '%s/.protected/%s',
+            $basePath,
+            $fileUrl
         );
 
         if (file_exists($protectedPath)) {
@@ -129,11 +149,7 @@ class UserDefinedFormControllerExtension extends DataExtension
         $path = sprintf(
             '%s/%s',
             ASSETS_PATH,
-            $flysystem->getMetadata(
-                $dbFile->Filename,
-                $dbFile->Hash,
-                $dbFile->Variant
-            )['path']
+            $fileUrl
         );
 
         if (file_exists($path)) {
@@ -147,11 +163,11 @@ class UserDefinedFormControllerExtension extends DataExtension
         $test_path = sprintf(
             '%s/%s',
             ASSETS_PATH,
-            $flysystem->getMetadata(
+            $flysystem->getAsURL(
                 '{$tempPath}/{$dbFile->Filename}',
                 $dbFile->Hash,
                 $dbFile->Variant
-            )['path']
+            )
         );
 
         if (!file_exists($test_path)) {
@@ -163,17 +179,19 @@ class UserDefinedFormControllerExtension extends DataExtension
 
     /**
      * Checks for signing certificate for an email address and, if found, returns an array containing
-     * the certificate path, key path and kay passphrase.
+     * the certificate path, key path and key passphrase.
      *
+     * @param string $senderEmailAddress
+     * @return array|null
      * @throws NotFoundExceptionInterface
      */
-    private function checkForSigningCredentials(string $senderEmailAddress): array
+    private function checkForSigningCredentials(string $senderEmailAddress): array|null
     {
         $senderSigningCertificate = SmimeSigningCertificate::get()
             ->filter('EmailAddress', $senderEmailAddress)->first();
 
         if (!$senderSigningCertificate) {
-            return [];
+            return null;
         }
 
         $certificatePath = $senderSigningCertificate->SigningCertificate->exists() ?

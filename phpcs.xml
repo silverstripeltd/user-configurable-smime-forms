@@ -152,6 +152,9 @@
         <!-- Complexity check often fails at getCMSFields(). -->
         <!-- Each team/project can decide if they'd prefer to just tweak the complexity level rather than exclude this rule -->
         <exclude name="SlevomatCodingStandard.Complexity.Cognitive.ComplexityTooHigh"/>
+        <!-- We allow less than one space between type hint and property.-->
+        <exclude name="SlevomatCodingStandard.TypeHints.ParameterTypeHintSpacing"/>
+        <exclude name="SlevomatCodingStandard.TypeHints.PropertyTypeHintSpacing"/>
     </rule>
 
     <rule ref="SlevomatCodingStandard.Namespaces.UnusedUses">

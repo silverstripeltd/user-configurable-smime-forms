@@ -58,7 +58,7 @@ class FormEmailEncryptionExtension extends DataExtension
      *
      * @return bool
      */
-    public function encryptEmail(): bool
+    public function isEncryptEmail(): bool
     {
         return $this->owner->UseEncryption;
     }

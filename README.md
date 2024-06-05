@@ -7,9 +7,8 @@ It uses S/MIME encryption.
 
 ## Requirements
 
-* SilverStripe ^4.0
+* SilverStripe ^5
 * SilverStripe Elemental Forms
-* SilverStripe S/Mime
 
 ## Installation
 To start using this module, just add it as a dependency to your project.
@@ -56,19 +55,20 @@ To add encryption certificates to the CMS:
 ### Adding sender certificates for digitally signing emails
 This module supports digital signing of emails, which provides further assurance for the recipient of where the email comes from.
 
-To sign an email you need both the .crt and private .key files. To upload these into the CMS:
+To sign an email you need both the certificate .pem and private key .pem files. To upload these into the CMS:
 * Log into the CMS as an administrator or user/group with the **Manage S/MIME certificates** permission
 * From the CMS left hand menu select **S/MIME Certificates**
 * Select the **Signing Certificates** tab
 * Click on **Add Signing Certificate**
 * Enter a valid **Email address**
-* Upload a valid `.crt` file to the **Signing Certificate** field
-* Upload a valid `.key` file to the **Signing Key** field
-* Enter the passphrase for the `.key` file (this will not be shown and will be stored in an encrypted format)
+* Upload a valid `.pem` file containing the certificate to the **Signing Certificate** field
+* Upload a valid `.pem` file containing the private key to the **Signing Key** field
+* Enter the passphrase for the `.pem` file (this will not be shown and will be stored in an encrypted format)
 * Click **Create**
 
 ## Maintainers
  * Andrew Dunn <andrew.dunn@silverstripe.com>
+ * Paul Jayme <pjayme@silverstripe.com>
 
 ## Bugtracker
 Bugs are tracked in the issues section of this repository. Before submitting an issue please read over
