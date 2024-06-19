@@ -1,6 +1,6 @@
 <?php
 
-namespace SilverStripe\SmimeForms\Tests;
+namespace SilverStripe\SmimeForms\Tests\Models;
 
 use SilverStripe\Assets\Dev\TestAssetStore;
 use SilverStripe\Assets\File;
@@ -44,7 +44,7 @@ class SmimeSigningCertificateTest extends SapphireTest
 
         // Expect an exception for the next write where we try to create certificate with duplicate email address
         $this->expectException(ValidationException::class);
-        $this->expectErrorMessage('There is already an entry with this email address.');
+        $this->expectExceptionMessage('There is already an entry with this email address.');
 
         $certificate = SmimeSigningCertificate::create();
         $certificate->EmailAddress = 'sender@example.com';
@@ -69,11 +69,15 @@ class SmimeSigningCertificateTest extends SapphireTest
         $this->logInWithPermission('ADMIN');
 
         $crtFile = File::create();
-        $crtFile->setFromLocalFile(sprintf('%s%s', __DIR__, '/fixtures/smime_test_sender.crt'));
+        $crtFile->setFromLocalFile(
+            sprintf('%s%s', dirname(__DIR__), '/fixtures/smime_test_sender_certificate.pem')
+        );
         $crtFile->write();
 
         $keyFile = File::create();
-        $keyFile->setFromLocalFile(sprintf('%s%s', __DIR__, '/fixtures/smime_test_sender.key'));
+        $keyFile->setFromLocalFile(
+            sprintf('%s%s', dirname(__DIR__), '/fixtures/smime_test_sender_privatekey.pem')
+        );
         $keyFile->write();
 
         $certificate = SmimeEncryptionCertificate::create();
@@ -101,7 +105,13 @@ class SmimeSigningCertificateTest extends SapphireTest
         $sqlQuery->setFrom('SmimeSigningCertificate');
         $sqlQuery->addWhere(['ID = ?' => $certificate->ID]);
         $result = $sqlQuery->execute();
-        $signingPasswordAsStored = $result->first()['SigningPassword'];
+        $iterator = $result->getIterator();
+
+        $signingPasswordAsStored = null;
+
+        foreach ($iterator as $item) {
+            $signingPasswordAsStored = $item['SigningPassword'];
+        }
 
         // Check that stored encrypted value is not the same as set value
         $this->assertNotEquals($signingPassword, $signingPasswordAsStored);

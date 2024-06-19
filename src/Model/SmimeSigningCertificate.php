@@ -107,7 +107,7 @@ class SmimeSigningCertificate extends DataObject
 
 
         $certificateKeyPassword = PasswordField::create('SigningPassword', 'Key Passphrase')
-            ->setDescription('This is the passphrase entered when the <strong>.key</strong> file was created. '
+            ->setDescription('This is the passphrase entered when the <strong>.pem</strong> file was created. '
                 . 'This is stored in an encrypted form and, once entered, this field will be disabled.');
 
         // If a value is already set then show a read only field.
@@ -123,14 +123,14 @@ class SmimeSigningCertificate extends DataObject
             [
                 UploadField::create('SigningCertificate', 'Certificate File')
                     ->setFolderName(self::$uploadFolder)
-                    ->setAllowedExtensions(['crt'])
-                    ->setDescription('Upload a valid <strong>.crt</strong> file for this email address. '
+                    ->setAllowedExtensions(['pem'])
+                    ->setDescription('Upload a valid <strong>.pem</strong> file for this email address. '
                         . 'This can be either a self-signed certificate or one purchased from a '
                         . 'recognised Certificate Authority.'),
                 UploadField::create('SigningKey', 'Certificate Private Key')
                     ->setFolderName(self::$uploadFolder)
-                    ->setAllowedExtensions(['key'])
-                    ->setDescription('Upload a valid <strong>.key</strong> file for this recipient email address.'),
+                    ->setAllowedExtensions(['pem'])
+                    ->setDescription('Upload a valid <strong>.pem</strong> file for this recipient email address.'),
                 $certificateKeyPassword,
             ]
         );

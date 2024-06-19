@@ -6,3 +6,7 @@ node_modules
 /assets/
 /.phpunit.result.cache
 /.idea/
+.env
+*.log
+public/
+composer.lock

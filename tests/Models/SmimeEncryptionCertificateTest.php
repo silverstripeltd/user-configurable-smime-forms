@@ -1,6 +1,6 @@
 <?php
 
-namespace SilverStripe\SmimeForms\Tests;
+namespace SilverStripe\SmimeForms\Tests\Models;
 
 use SilverStripe\Assets\Dev\TestAssetStore;
 use SilverStripe\Assets\File;
@@ -42,7 +42,7 @@ class SmimeEncryptionCertificateTest extends SapphireTest
 
         // Expect an exception for the next write where we try to create certificate with duplicate email address
         $this->expectException(ValidationException::class);
-        $this->expectErrorMessage('There is already an entry with this email address.');
+        $this->expectExceptionMessage('There is already an entry with this email address.');
 
         $certificate = SmimeEncryptionCertificate::create();
         $certificate->EmailAddress = 'recipient@example.com';
@@ -67,7 +67,9 @@ class SmimeEncryptionCertificateTest extends SapphireTest
         $this->logInWithPermission('ADMIN');
 
         $crtFile = File::create();
-        $crtFile->setFromLocalFile(sprintf('%s%s', __DIR__, '/fixtures/smime_test_recipient.crt'));
+        $crtFile->setFromLocalFile(
+            sprintf('%s%s', dirname(__DIR__), '/fixtures/smime_test_recipient.crt')
+        );
         $crtFile->write();
 
         $certificate = SmimeEncryptionCertificate::create();

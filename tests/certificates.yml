@@ -1,10 +1,10 @@
 SilverStripe\Assets\File:
   senderCertificate:
-    Title: 'smime_test_sender'
-    Filename: 'smime_test_sender.crt'
+    Title: 'smime_test_sender_certificate'
+    Filename: 'smime_test_sender_certificate.pem'
   senderKey:
-    Title: 'smime_test_sender'
-    Filename: 'smime_test_sender.key'
+    Title: 'smime_test_sender_privatekey'
+    Filename: 'smime_test_sender_privatekey.pem'
 
 SilverStripe\SmimeForms\Model\SmimeSigningCertificate:
   senderCertificate:

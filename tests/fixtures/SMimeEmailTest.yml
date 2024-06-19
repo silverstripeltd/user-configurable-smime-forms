@@ -1,3 +1,6 @@
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+# ELEMENTAL FORMS & PAGES
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 DNADesign\Elemental\Models\ElementalArea:
   registrationForm:
     OwnerClassName: Page
@@ -11,18 +14,19 @@ DNADesign\ElementalUserForms\Model\ElementForm:
 
 SilverStripe\UserForms\Model\EditableFormField\EditableTextField:
   text-field1:
-    Sort: 12
+    Name: TextFieldOne
+    Title: Sample Text Field
+    Placeholder: Sample Text Field
     Parent: =>DNADesign\ElementalUserForms\Model\ElementForm.registration_form
-    Title: Custom field
-    Placeholder: Custom field
+    Sort: 1
 
 SilverStripe\UserForms\Model\EditableFormField\EditableEmailField:
   email-field1:
-    Name: Email
-    Sort: 13
-    Parent: =>DNADesign\ElementalUserForms\Model\ElementForm.registration_form
-    Title: Email
+    Name: EmailFieldOne
+    Title: Sample Email Field
     Placeholder: Enter your email
+    Parent: =>DNADesign\ElementalUserForms\Model\ElementForm.registration_form
+    Sort: 2
 
 Page:
   RegistrationForm:

@@ -1,10 +1,10 @@
 SilverStripe\Assets\File:
   allowed_extensions:
     - crt
-    - key
+    - pem
 SilverStripe\MimeValidator\MimeUploadValidator:
   MimeTypes:
     crt:
       - 'text/plain'
-    key:
-    - 'text/plain'
+    pem:
+      - 'text/plain'
