@@ -5,7 +5,7 @@ namespace SilverStripe\SmimeForms\Extensions;
 use SilverStripe\Forms\CheckboxField;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\LiteralField;
-use SilverStripe\ORM\DataExtension;
+use SilverStripe\Core\Extension;
 use UncleCheese\DisplayLogic\Forms\Wrapper;
 
 /**
@@ -16,7 +16,7 @@ use UncleCheese\DisplayLogic\Forms\Wrapper;
  *
  * @package SilverStripe\SmimeForms\Extensions
  */
-class FormEmailEncryptionExtension extends DataExtension
+class FormEmailEncryptionExtension extends Extension
 {
 
     /**

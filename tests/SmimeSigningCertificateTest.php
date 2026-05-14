@@ -6,7 +6,7 @@ use SilverStripe\Assets\Dev\TestAssetStore;
 use SilverStripe\Assets\File;
 use SilverStripe\Dev\SapphireTest;
 use SilverStripe\ORM\Queries\SQLSelect;
-use SilverStripe\ORM\ValidationException;
+use SilverStripe\Core\Validation\ValidationException;
 use SilverStripe\SmimeForms\Model\SmimeEncryptionCertificate;
 use SilverStripe\SmimeForms\Model\SmimeSigningCertificate;
 

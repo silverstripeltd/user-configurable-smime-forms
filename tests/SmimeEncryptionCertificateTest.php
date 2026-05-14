@@ -5,7 +5,7 @@ namespace SilverStripe\SmimeForms\Tests;
 use SilverStripe\Assets\Dev\TestAssetStore;
 use SilverStripe\Assets\File;
 use SilverStripe\Dev\SapphireTest;
-use SilverStripe\ORM\ValidationException;
+use SilverStripe\Core\Validation\ValidationException;
 use SilverStripe\SmimeForms\Model\SmimeEncryptionCertificate;
 
 class SmimeEncryptionCertificateTest extends SapphireTest

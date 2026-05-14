@@ -11,7 +11,7 @@ use SilverStripe\Assets\Storage\AssetStore;
 use SilverStripe\Control\Email\Email;
 use SilverStripe\Control\Email\Mailer;
 use SilverStripe\Core\Injector\Injector;
-use SilverStripe\ORM\DataExtension;
+use SilverStripe\Core\Extension;
 use SilverStripe\SMIME\Control\SMIMEMailer;
 use SilverStripe\SmimeForms\Model\SmimeEncryptionCertificate;
 use SilverStripe\SmimeForms\Model\SmimeSigningCertificate;
@@ -25,7 +25,7 @@ use SilverStripe\UserForms\Model\Recipient\EmailRecipient;
  *
  * @package SilverStripe\SmimeForms\Extensions
  */
-class UserDefinedFormControllerExtension extends DataExtension
+class UserDefinedFormControllerExtension extends Extension
 {
 
     /**
