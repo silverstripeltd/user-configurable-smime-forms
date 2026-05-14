@@ -27,7 +27,7 @@
         "silverstripe/smime": "dev-master",
         "dnadesign/silverstripe-elemental-userforms": "^5",
         "silverstripe/asset-admin": "^3",
-        "unclecheese/display-logic": "^3",
+        "unclecheese/display-logic": "^4 || ^3 || ^2",
         "lekoala/silverstripe-encrypt": "^4 || ^3.4"
     },
     "require-dev": {
